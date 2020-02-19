@@ -9,34 +9,34 @@ find_package(Threads REQUIRED)
 
 find_package(SQLite3 REQUIRED)
 
+set(global_compile_options "")
+set(global_link_libraries Threads::Threads SQLite::SQLite3)
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(global_compile_options -pedantic -Wall -Wextra -Werror)
+  list(APPEND global_compile_options -pedantic -Wall -Wextra -Werror)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(global_compile_options ${global_compile_options} -Weverything
-    -Wno-c++98-compat -Wno-padded -Wno-exit-time-destructors
-    -Wno-global-constructors)
+  list(APPEND global_compile_options -Weverything -Wno-c++98-compat -Wno-padded
+    -Wno-exit-time-destructors -Wno-global-constructors)
 endif()
-
-set(global_link_libraries Threads::Threads SQLite::SQLite3)
 
 option(TLO_CPP_COLORED_DIAGNOSTICS
   "Tell the compiler to use colors in diagnostics (GNU/Clang only)." ON)
 if (TLO_CPP_COLORED_DIAGNOSTICS)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(global_compile_options ${global_compile_options} -fdiagnostics-color)
+    list(APPEND global_compile_options -fdiagnostics-color)
   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(global_compile_options ${global_compile_options} -fcolor-diagnostics)
+    list(APPEND global_compile_options -fcolor-diagnostics)
   endif()
 endif()
 
 option(TLO_CPP_USE_LIBCPP "Use libc++ (Clang only)." OFF)
 if (TLO_CPP_USE_LIBCPP)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(global_compile_options ${global_compile_options} -stdlib=libc++)
-    set(global_link_libraries ${global_link_libraries} c++)
+    list(APPEND global_compile_options -stdlib=libc++)
+    list(APPEND global_link_libraries c++)
   endif()
 endif()
 
@@ -45,10 +45,10 @@ option(TLO_CPP_LINK_FS
 if (TLO_CPP_LINK_FS)
   if (TLO_CPP_USE_LIBCPP)
     # Prior to LLVM 9, using std::filesystem required linker option -lc++fs.
-    set(global_link_libraries ${global_link_libraries} c++fs)
+    list(APPEND global_link_libraries c++fs)
   else()
     # Prior to GCC 9, using std::filesystem required linker option -lstdc++fs.
-    set(global_link_libraries ${global_link_libraries} stdc++fs)
+    list(APPEND global_link_libraries stdc++fs)
   endif()
 endif()
 
