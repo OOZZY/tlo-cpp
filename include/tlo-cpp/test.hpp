@@ -14,32 +14,32 @@ struct Test {
 };
 
 namespace internal {
-std::deque<const Test *> &constructOrGetTests();
+std::deque<const Test *> &getTests();
 }  // namespace internal
 
-#define TLO_TEST(TestName)                                          \
-  struct GeneratedTest##TestName : ::tlo::test::Test {              \
-    GeneratedTest##TestName() {                                     \
-      ::tlo::test::internal::constructOrGetTests().push_back(this); \
-    }                                                               \
-    const char *testName() const override { return #TestName; }     \
-    void run() const override;                                      \
-  };                                                                \
-  const GeneratedTest##TestName generatedTest##TestName;            \
+#define TLO_TEST(TestName)                                      \
+  struct GeneratedTest##TestName : ::tlo::test::Test {          \
+    GeneratedTest##TestName() {                                 \
+      ::tlo::test::internal::getTests().push_back(this);        \
+    }                                                           \
+    const char *testName() const override { return #TestName; } \
+    void run() const override;                                  \
+  };                                                            \
+  const GeneratedTest##TestName generatedTest##TestName;        \
   void GeneratedTest##TestName::run() const
 
-#define TLO_TEST_USING_FIXTURE(FixtureName, TestName)               \
-  struct GeneratedTest##FixtureName##TestName : FixtureName {       \
-    GeneratedTest##FixtureName##TestName() {                        \
-      ::tlo::test::internal::constructOrGetTests().push_back(this); \
-    }                                                               \
-    const char *testName() const override {                         \
-      return #FixtureName "." #TestName;                            \
-    }                                                               \
-    void run() const override;                                      \
-  };                                                                \
-  const GeneratedTest##FixtureName##TestName                        \
-      generatedTest##FixtureName##TestName;                         \
+#define TLO_TEST_USING_FIXTURE(FixtureName, TestName)         \
+  struct GeneratedTest##FixtureName##TestName : FixtureName { \
+    GeneratedTest##FixtureName##TestName() {                  \
+      ::tlo::test::internal::getTests().push_back(this);      \
+    }                                                         \
+    const char *testName() const override {                   \
+      return #FixtureName "." #TestName;                      \
+    }                                                         \
+    void run() const override;                                \
+  };                                                          \
+  const GeneratedTest##FixtureName##TestName                  \
+      generatedTest##FixtureName##TestName;                   \
   void GeneratedTest##FixtureName##TestName::run() const
 
 namespace internal {

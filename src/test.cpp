@@ -7,7 +7,7 @@ namespace test {
 Test::~Test() = default;
 
 namespace internal {
-std::deque<const Test *> &constructOrGetTests() {
+std::deque<const Test *> &getTests() {
   static std::deque<const Test *> tests;
   return tests;
 }
@@ -45,7 +45,7 @@ void expect(bool isExpect, bool condition, const char *file, int line,
 }  // namespace internal
 
 void runTests() {
-  const std::deque<const Test *> &tests = internal::constructOrGetTests();
+  const std::deque<const Test *> &tests = internal::getTests();
   for (const Test *test : tests) {
     try {
       std::cout << "[ RUNNING ] " << test->testName() << std::endl;
