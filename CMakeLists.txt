@@ -59,18 +59,22 @@ macro(prepend listVar prefix)
   endforeach(item)
 endmacro(prepend)
 
-set(headers chrono.hpp damerau-levenshtein.hpp filesystem.hpp hash.hpp lcs.hpp
-  levenshtein.hpp options.hpp sqlite3.hpp stop.hpp string.hpp)
-prepend(headers ${PROJECT_SOURCE_DIR}/include/tlo-cpp/ ${headers})
+set(tlo_cpp_headers chrono.hpp damerau-levenshtein.hpp filesystem.hpp hash.hpp
+  lcs.hpp levenshtein.hpp options.hpp sqlite3.hpp stop.hpp string.hpp)
+prepend(tlo_cpp_headers ${PROJECT_SOURCE_DIR}/include/tlo-cpp/
+  ${tlo_cpp_headers})
 
-set(private_headers container.hpp)
-prepend(private_headers ${PROJECT_SOURCE_DIR}/src/ ${private_headers})
+set(tlo_cpp_private_headers container.hpp)
+prepend(tlo_cpp_private_headers ${PROJECT_SOURCE_DIR}/src/
+  ${tlo_cpp_private_headers})
 
-set(sources chrono.cpp container.cpp damerau-levenshtein.cpp filesystem.cpp
-  hash.cpp lcs.cpp levenshtein.cpp options.cpp sqlite3.cpp stop.cpp string.cpp)
-prepend(sources ${PROJECT_SOURCE_DIR}/src/ ${sources})
+set(tlo_cpp_sources chrono.cpp container.cpp damerau-levenshtein.cpp
+  filesystem.cpp hash.cpp lcs.cpp levenshtein.cpp options.cpp sqlite3.cpp
+  stop.cpp string.cpp)
+prepend(tlo_cpp_sources ${PROJECT_SOURCE_DIR}/src/ ${tlo_cpp_sources})
 
-add_library(tlo-cpp STATIC ${headers} ${private_headers} ${sources})
+add_library(tlo-cpp STATIC ${tlo_cpp_headers} ${tlo_cpp_private_headers}
+  ${tlo_cpp_sources})
 set_target_properties(tlo-cpp PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp PUBLIC cxx_std_17)
 target_compile_options(tlo-cpp PRIVATE ${global_compile_options})
@@ -86,29 +90,14 @@ target_compile_options(tlo-cpp-test-main PRIVATE ${global_compile_options})
 target_include_directories(tlo-cpp-test-main PUBLIC
   ${PROJECT_SOURCE_DIR}/include)
 
-add_executable(lcs-test ${PROJECT_SOURCE_DIR}/test/lcs-test.cpp)
-set_target_properties(lcs-test PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_options(lcs-test PRIVATE ${global_compile_options})
-target_link_libraries(lcs-test PRIVATE tlo-cpp)
+set(tlo_cpp_test_sources damerau-levenshtein-test.cpp lcs-test.cpp
+  levenshtein-test.cpp test-test.cpp)
+prepend(tlo_cpp_test_sources ${PROJECT_SOURCE_DIR}/test/
+  ${tlo_cpp_test_sources})
 
-add_executable(levenshtein-test ${PROJECT_SOURCE_DIR}/test/levenshtein-test.cpp)
-set_target_properties(levenshtein-test PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_options(levenshtein-test PRIVATE ${global_compile_options})
-target_link_libraries(levenshtein-test PRIVATE tlo-cpp)
+add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
+set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_options(tlo-cpp-test PRIVATE ${global_compile_options})
+target_link_libraries(tlo-cpp-test PRIVATE tlo-cpp tlo-cpp-test-main)
 
-add_executable(damerau-levenshtein-test
-  ${PROJECT_SOURCE_DIR}/test/damerau-levenshtein-test.cpp)
-set_target_properties(damerau-levenshtein-test PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_options(damerau-levenshtein-test PRIVATE
-  ${global_compile_options})
-target_link_libraries(damerau-levenshtein-test PRIVATE tlo-cpp)
-
-add_executable(test-test ${PROJECT_SOURCE_DIR}/test/test-test.cpp)
-set_target_properties(test-test PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_options(test-test PRIVATE ${global_compile_options})
-target_link_libraries(test-test PRIVATE tlo-cpp-test-main)
-
-add_test(NAME lcs-test COMMAND lcs-test)
-add_test(NAME levenshtein-test COMMAND levenshtein-test)
-add_test(NAME damerau-levenshtein-test COMMAND damerau-levenshtein-test)
-add_test(NAME test-test COMMAND test-test)
+add_test(NAME tlo-cpp-test COMMAND tlo-cpp-test)

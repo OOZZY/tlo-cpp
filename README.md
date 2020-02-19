@@ -30,3 +30,9 @@ Run tests with make.
 ```
 $ make test
 ```
+
+Run tests directly.
+
+```
+$ ./tlo-cpp-test
+```
