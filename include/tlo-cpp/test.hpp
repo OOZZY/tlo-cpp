@@ -5,8 +5,8 @@
 
 namespace tlo {
 namespace test {
-// base class for a unit test, a test fixture, or a unit test using a test
-// fixture
+// Base class for a unit test, a test fixture, or a unit test using a test
+// fixture.
 struct Test {
   virtual const char *testName() const = 0;
   virtual void run() const = 0;
@@ -14,6 +14,7 @@ struct Test {
 };
 
 namespace internal {
+// Constructs the deque on first use of function.
 std::deque<const Test *> &getTests();
 }  // namespace internal
 
@@ -43,6 +44,7 @@ std::deque<const Test *> &getTests();
   void GeneratedTest##FixtureName##TestName::run() const
 
 namespace internal {
+// Returns condition.
 bool expect(bool isExpect, bool condition, const char *file, int line,
             const char *func, const char *conditionString);
 }  // namespace internal
