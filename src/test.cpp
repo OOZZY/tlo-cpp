@@ -6,10 +6,12 @@ namespace tlo {
 namespace test {
 Test::~Test() = default;
 
+namespace internal {
 std::deque<const Test *> &constructOrGetTests() {
   static std::deque<const Test *> tests;
   return tests;
 }
+}  // namespace internal
 
 namespace {
 int numExpects = 0;
@@ -19,6 +21,7 @@ int numAssertsFailed = 0;
 int numObjectsCaught = 0;
 }  // namespace
 
+namespace internal {
 void expect(bool isExpect, bool condition, const char *file, int line,
             const char *func, const char *conditionString) {
   if (isExpect) {
@@ -39,9 +42,10 @@ void expect(bool isExpect, bool condition, const char *file, int line,
     }
   }
 }
+}  // namespace internal
 
 void runTests() {
-  const std::deque<const Test *> &tests = constructOrGetTests();
+  const std::deque<const Test *> &tests = internal::constructOrGetTests();
   for (const Test *test : tests) {
     try {
       std::cout << "[ RUNNING ] " << test->testName() << std::endl;

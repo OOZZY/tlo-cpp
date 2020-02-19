@@ -13,44 +13,48 @@ struct Test {
   virtual ~Test();
 };
 
+namespace internal {
 std::deque<const Test *> &constructOrGetTests();
+}  // namespace internal
 
-#define TLO_TEST(TestName)                                      \
-  struct GeneratedTest##TestName : ::tlo::test::Test {          \
-    GeneratedTest##TestName() {                                 \
-      ::tlo::test::constructOrGetTests().push_back(this);       \
-    }                                                           \
-    const char *testName() const override { return #TestName; } \
-    void run() const override;                                  \
-  };                                                            \
-  const GeneratedTest##TestName generatedTest##TestName;        \
+#define TLO_TEST(TestName)                                          \
+  struct GeneratedTest##TestName : ::tlo::test::Test {              \
+    GeneratedTest##TestName() {                                     \
+      ::tlo::test::internal::constructOrGetTests().push_back(this); \
+    }                                                               \
+    const char *testName() const override { return #TestName; }     \
+    void run() const override;                                      \
+  };                                                                \
+  const GeneratedTest##TestName generatedTest##TestName;            \
   void GeneratedTest##TestName::run() const
 
-#define TLO_TEST_USING_FIXTURE(FixtureName, TestName)         \
-  struct GeneratedTest##FixtureName##TestName : FixtureName { \
-    GeneratedTest##FixtureName##TestName() {                  \
-      ::tlo::test::constructOrGetTests().push_back(this);     \
-    }                                                         \
-    const char *testName() const override {                   \
-      return #FixtureName "." #TestName;                      \
-    }                                                         \
-    void run() const override;                                \
-  };                                                          \
-  const GeneratedTest##FixtureName##TestName                  \
-      generatedTest##FixtureName##TestName;                   \
+#define TLO_TEST_USING_FIXTURE(FixtureName, TestName)               \
+  struct GeneratedTest##FixtureName##TestName : FixtureName {       \
+    GeneratedTest##FixtureName##TestName() {                        \
+      ::tlo::test::internal::constructOrGetTests().push_back(this); \
+    }                                                               \
+    const char *testName() const override {                         \
+      return #FixtureName "." #TestName;                            \
+    }                                                               \
+    void run() const override;                                      \
+  };                                                                \
+  const GeneratedTest##FixtureName##TestName                        \
+      generatedTest##FixtureName##TestName;                         \
   void GeneratedTest##FixtureName##TestName::run() const
 
+namespace internal {
 void expect(bool isExpect, bool condition, const char *file, int line,
             const char *func, const char *conditionString);
+}  // namespace internal
 
 #define TLO_EXPECT(condition)                                          \
-  ::tlo::test::expect(true, (condition), __FILE__, __LINE__, __func__, \
-                      #condition)
+  ::tlo::test::internal::expect(true, (condition), __FILE__, __LINE__, \
+                                __func__, #condition)
 
 #define TLO_ASSERT(condition)                                             \
   do {                                                                    \
-    ::tlo::test::expect(false, (condition), __FILE__, __LINE__, __func__, \
-                        #condition);                                      \
+    ::tlo::test::internal::expect(false, (condition), __FILE__, __LINE__, \
+                                  __func__, #condition);                  \
     if (!(condition)) {                                                   \
       return;                                                             \
     }                                                                     \
