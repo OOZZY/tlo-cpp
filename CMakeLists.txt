@@ -1,0 +1,98 @@
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+project("tlo-cpp")
+enable_testing()
+
+# Threads required. See CMake documentation on FindThreads module.
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+find_package(SQLite3 REQUIRED)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set(global_compile_options -pedantic -Wall -Wextra -Werror)
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set(global_compile_options ${global_compile_options} -Weverything
+    -Wno-c++98-compat -Wno-padded)
+endif()
+
+set(global_link_libraries Threads::Threads SQLite::SQLite3)
+
+option(TLO_CPP_COLORED_DIAGNOSTICS
+  "Tell the compiler to use colors in diagnostics (GNU/Clang only)." ON)
+if (TLO_CPP_COLORED_DIAGNOSTICS)
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(global_compile_options ${global_compile_options} -fdiagnostics-color)
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(global_compile_options ${global_compile_options} -fcolor-diagnostics)
+  endif()
+endif()
+
+option(TLO_CPP_USE_LIBCPP "Use libc++ (Clang only)." OFF)
+if (TLO_CPP_USE_LIBCPP)
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(global_compile_options ${global_compile_options} -stdlib=libc++)
+    set(global_link_libraries ${global_link_libraries} c++)
+  endif()
+endif()
+
+option(TLO_CPP_LINK_FS
+  "Link to filesystem library of older GNU and Clang (GNU/Clang only)." OFF)
+if (TLO_CPP_LINK_FS)
+  if (TLO_CPP_USE_LIBCPP)
+    # Prior to LLVM 9, using std::filesystem required linker option -lc++fs.
+    set(global_link_libraries ${global_link_libraries} c++fs)
+  else()
+    # Prior to GCC 9, using std::filesystem required linker option -lstdc++fs.
+    set(global_link_libraries ${global_link_libraries} stdc++fs)
+  endif()
+endif()
+
+macro(prepend listVar prefix)
+  set(${listVar} "")
+  foreach(item ${ARGN})
+    list(APPEND ${listVar} "${prefix}${item}")
+  endforeach(item)
+endmacro(prepend)
+
+set(headers chrono.hpp damerau-levenshtein.hpp filesystem.hpp hash.hpp lcs.hpp
+  levenshtein.hpp options.hpp sqlite3.hpp stop.hpp string.hpp)
+prepend(headers ${PROJECT_SOURCE_DIR}/include/tlo-cpp/ ${headers})
+
+set(private_headers container.hpp)
+prepend(private_headers ${PROJECT_SOURCE_DIR}/src/ ${private_headers})
+
+set(sources chrono.cpp container.cpp damerau-levenshtein.cpp filesystem.cpp
+  hash.cpp lcs.cpp levenshtein.cpp options.cpp sqlite3.cpp stop.cpp string.cpp)
+prepend(sources ${PROJECT_SOURCE_DIR}/src/ ${sources})
+
+add_library(tlo-cpp STATIC ${headers} ${private_headers} ${sources})
+set_target_properties(tlo-cpp PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(tlo-cpp PUBLIC cxx_std_17)
+target_compile_options(tlo-cpp PRIVATE ${global_compile_options})
+target_include_directories(tlo-cpp PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(tlo-cpp PUBLIC ${global_link_libraries})
+
+add_executable(lcs-test ${PROJECT_SOURCE_DIR}/test/lcs-test.cpp)
+set_target_properties(lcs-test PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_options(lcs-test PRIVATE ${global_compile_options})
+target_link_libraries(lcs-test PRIVATE tlo-cpp)
+
+add_executable(levenshtein-test ${PROJECT_SOURCE_DIR}/test/levenshtein-test.cpp)
+set_target_properties(levenshtein-test PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_options(levenshtein-test PRIVATE ${global_compile_options})
+target_link_libraries(levenshtein-test PRIVATE tlo-cpp)
+
+add_executable(damerau-levenshtein-test
+  ${PROJECT_SOURCE_DIR}/test/damerau-levenshtein-test.cpp)
+set_target_properties(damerau-levenshtein-test PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_options(damerau-levenshtein-test PRIVATE
+  ${global_compile_options})
+target_link_libraries(damerau-levenshtein-test PRIVATE tlo-cpp)
+
+add_test(NAME lcs-test COMMAND lcs-test)
+add_test(NAME levenshtein-test COMMAND levenshtein-test)
+add_test(NAME damerau-levenshtein-test COMMAND damerau-levenshtein-test)
