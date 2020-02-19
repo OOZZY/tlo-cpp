@@ -4,7 +4,7 @@
 
 namespace tlo {
 namespace test {
-Test::~Test() {}
+Test::~Test() = default;
 
 std::deque<const Test *> &constructOrGetTests() {
   static std::deque<const Test *> tests;
