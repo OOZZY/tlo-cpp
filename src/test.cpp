@@ -22,7 +22,7 @@ int numObjectsCaught = 0;
 }  // namespace
 
 namespace internal {
-void expect(bool isExpect, bool condition, const char *file, int line,
+bool expect(bool isExpect, bool condition, const char *file, int line,
             const char *func, const char *conditionString) {
   if (isExpect) {
     ++numExpects;
@@ -41,6 +41,8 @@ void expect(bool isExpect, bool condition, const char *file, int line,
                 << ": assert failed: " << conditionString << "." << std::endl;
     }
   }
+
+  return condition;
 }
 }  // namespace internal
 

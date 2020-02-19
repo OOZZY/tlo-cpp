@@ -43,7 +43,7 @@ std::deque<const Test *> &getTests();
   void GeneratedTest##FixtureName##TestName::run() const
 
 namespace internal {
-void expect(bool isExpect, bool condition, const char *file, int line,
+bool expect(bool isExpect, bool condition, const char *file, int line,
             const char *func, const char *conditionString);
 }  // namespace internal
 
@@ -51,13 +51,12 @@ void expect(bool isExpect, bool condition, const char *file, int line,
   ::tlo::test::internal::expect(true, (condition), __FILE__, __LINE__, \
                                 __func__, #condition)
 
-#define TLO_ASSERT(condition)                                             \
-  do {                                                                    \
-    ::tlo::test::internal::expect(false, (condition), __FILE__, __LINE__, \
-                                  __func__, #condition);                  \
-    if (!(condition)) {                                                   \
-      return;                                                             \
-    }                                                                     \
+#define TLO_ASSERT(condition)                                                  \
+  do {                                                                         \
+    if (!::tlo::test::internal::expect(false, (condition), __FILE__, __LINE__, \
+                                       __func__, #condition)) {                \
+      return;                                                                  \
+    }                                                                          \
   } while (0)
 
 void runTests();
