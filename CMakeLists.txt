@@ -16,7 +16,8 @@ endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(global_compile_options ${global_compile_options} -Weverything
-    -Wno-c++98-compat -Wno-padded)
+    -Wno-c++98-compat -Wno-padded -Wno-exit-time-destructors
+    -Wno-global-constructors)
 endif()
 
 set(global_link_libraries Threads::Threads SQLite::SQLite3)
@@ -76,6 +77,15 @@ target_compile_options(tlo-cpp PRIVATE ${global_compile_options})
 target_include_directories(tlo-cpp PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(tlo-cpp PUBLIC ${global_link_libraries})
 
+add_library(tlo-cpp-test-main STATIC
+  ${PROJECT_SOURCE_DIR}/include/tlo-cpp/test.hpp
+  ${PROJECT_SOURCE_DIR}/src/test.cpp ${PROJECT_SOURCE_DIR}/src/test-main.cpp)
+set_target_properties(tlo-cpp-test-main PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(tlo-cpp-test-main PUBLIC cxx_std_17)
+target_compile_options(tlo-cpp-test-main PRIVATE ${global_compile_options})
+target_include_directories(tlo-cpp-test-main PUBLIC
+  ${PROJECT_SOURCE_DIR}/include)
+
 add_executable(lcs-test ${PROJECT_SOURCE_DIR}/test/lcs-test.cpp)
 set_target_properties(lcs-test PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_options(lcs-test PRIVATE ${global_compile_options})
@@ -93,6 +103,12 @@ target_compile_options(damerau-levenshtein-test PRIVATE
   ${global_compile_options})
 target_link_libraries(damerau-levenshtein-test PRIVATE tlo-cpp)
 
+add_executable(test-test ${PROJECT_SOURCE_DIR}/test/test-test.cpp)
+set_target_properties(test-test PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_options(test-test PRIVATE ${global_compile_options})
+target_link_libraries(test-test PRIVATE tlo-cpp-test-main)
+
 add_test(NAME lcs-test COMMAND lcs-test)
 add_test(NAME levenshtein-test COMMAND levenshtein-test)
 add_test(NAME damerau-levenshtein-test COMMAND damerau-levenshtein-test)
+add_test(NAME test-test COMMAND test-test)
