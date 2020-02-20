@@ -1,5 +1,6 @@
 #include "tlo-cpp/chrono.hpp"
 
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
@@ -89,26 +90,6 @@ std::time_t toTimeT(const std::string &localTimestamp) {
   return std::mktime(&localTimeObject);
 }
 
-namespace {
-constexpr int SECONDS_IN_MINUTE = 60;
-constexpr int SECONDS_IN_HOUR = 60 * SECONDS_IN_MINUTE;
-constexpr long SECONDS_IN_DAY = 24 * SECONDS_IN_HOUR;
-constexpr long SECONDS_IN_YEAR = 365 * SECONDS_IN_DAY;
-constexpr int YEARS_SINCE_BASE_DURING_EPOCH = 70;
-
-// Calculates the number of seconds since the Epoch as defined by POSIX.
-std::intmax_t secondsSinceTheEpoch(const std::tm &localTimeObject) {
-  return localTimeObject.tm_sec + localTimeObject.tm_min * SECONDS_IN_MINUTE +
-         localTimeObject.tm_hour * SECONDS_IN_HOUR +
-         localTimeObject.tm_yday * SECONDS_IN_DAY +
-         (localTimeObject.tm_year - YEARS_SINCE_BASE_DURING_EPOCH) *
-             SECONDS_IN_YEAR +
-         ((localTimeObject.tm_year - 69) / 4) * SECONDS_IN_DAY -
-         ((localTimeObject.tm_year - 1) / 100) * SECONDS_IN_DAY +
-         ((localTimeObject.tm_year + 299) / 400) * SECONDS_IN_DAY;
-}
-}  // namespace
-
 bool equalTimestamps(const std::string &localTimestamp1,
                      const std::string &localTimestamp2,
                      int maxSecondDifference) {
@@ -116,21 +97,10 @@ bool equalTimestamps(const std::string &localTimestamp1,
     return true;
   }
 
-  std::tm localTimeObject1;
-  std::tm localTimeObject2;
+  std::time_t time1 = toTimeT(localTimestamp1);
+  std::time_t time2 = toTimeT(localTimestamp2);
+  double secondsDifference = std::abs(std::difftime(time1, time2));
 
-  toTm(localTimeObject1, localTimestamp1);
-  toTm(localTimeObject2, localTimestamp2);
-
-  std::intmax_t seconds1 = secondsSinceTheEpoch(localTimeObject1);
-  std::intmax_t seconds2 = secondsSinceTheEpoch(localTimeObject2);
-
-  if (seconds1 > seconds2) {
-    return (seconds1 - seconds2) <= maxSecondDifference;
-  } else if (seconds2 > seconds1) {
-    return (seconds2 - seconds1) <= maxSecondDifference;
-  } else {
-    return true;
-  }
+  return secondsDifference <= maxSecondDifference;
 }
 }  // namespace tlo
