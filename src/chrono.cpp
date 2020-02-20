@@ -99,6 +99,43 @@ std::time_t localTimestampToTime(const std::string &localTimestamp) {
   return std::mktime(&localTimeObject);
 }
 
+namespace {
+// Returns time with UTC offset subtracted.
+std::time_t subtractOffset(std::time_t time) {
+  std::unique_lock<std::mutex> timeUniqueLock(timeMutex);
+  std::time_t timeWithOffsetSubtracted = std::mktime(std::gmtime(&time));
+
+  timeUniqueLock.unlock();
+  return timeWithOffsetSubtracted;
+}
+
+// Returns time with UTC offset added.
+std::time_t addOffset(std::time_t time) {
+  std::time_t timeWithOffsetSubtracted = subtractOffset(time);
+  std::time_t timeWithOffsetAdded;
+
+  if (time > timeWithOffsetSubtracted) {
+    timeWithOffsetAdded = time + (time - timeWithOffsetSubtracted);
+  } else if (time < timeWithOffsetSubtracted) {
+    timeWithOffsetAdded = time - (timeWithOffsetSubtracted - time);
+  } else if (time == timeWithOffsetSubtracted) {
+    timeWithOffsetAdded = time;
+  }
+
+  return timeWithOffsetAdded;
+}
+}  // namespace
+
+std::time_t utcTimestampToTime(const std::string &utcTimestamp) {
+  std::tm utcTimeObject;
+
+  timestampToTm(utcTimeObject, utcTimestamp);
+
+  std::time_t timeWithOffsetSubtracted = std::mktime(&utcTimeObject);
+
+  return addOffset(timeWithOffsetSubtracted);
+}
+
 bool equalLocalTimestamps(const std::string &localTimestamp1,
                           const std::string &localTimestamp2,
                           int maxSecondDifference) {
@@ -108,6 +145,20 @@ bool equalLocalTimestamps(const std::string &localTimestamp1,
 
   std::time_t time1 = localTimestampToTime(localTimestamp1);
   std::time_t time2 = localTimestampToTime(localTimestamp2);
+  double secondsDifference = std::abs(std::difftime(time1, time2));
+
+  return secondsDifference <= maxSecondDifference;
+}
+
+bool equalUtcTimestamps(const std::string &utcTimestamp1,
+                        const std::string &utcTimestamp2,
+                        int maxSecondDifference) {
+  if (utcTimestamp1 == utcTimestamp2) {
+    return true;
+  }
+
+  std::time_t time1 = utcTimestampToTime(utcTimestamp1);
+  std::time_t time2 = utcTimestampToTime(utcTimestamp2);
   double secondsDifference = std::abs(std::difftime(time1, time2));
 
   return secondsDifference <= maxSecondDifference;
