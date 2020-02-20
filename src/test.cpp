@@ -1,7 +1,5 @@
 #include "tlo-cpp/test.hpp"
 
-#include <iostream>
-
 namespace tlo {
 namespace test {
 Test::~Test() = default;
@@ -11,17 +9,13 @@ std::deque<const Test *> &getTests() {
   static std::deque<const Test *> tests;
   return tests;
 }
-}  // namespace internal
 
-namespace {
 int numExpects = 0;
 int numAsserts = 0;
 int numExpectsFailed = 0;
 int numAssertsFailed = 0;
 int numObjectsCaught = 0;
-}  // namespace
 
-namespace internal {
 bool expect(bool isExpect, bool condition, const char *file, int line,
             const char *func, const char *conditionString) {
   if (isExpect) {
@@ -54,12 +48,12 @@ void runTests() {
       test->run();
       std::cout << "[ DONE    ] " << test->testName() << std::endl;
     } catch (const std::exception &e) {
-      ++numObjectsCaught;
+      ++internal::numObjectsCaught;
       std::cout << e.what() << std::endl;
       std::cout << "[ ERROR   ] " << test->testName() << " threw an exception"
                 << std::endl;
     } catch (...) {
-      ++numObjectsCaught;
+      ++internal::numObjectsCaught;
       std::cout << "[ ERROR   ] " << test->testName() << " threw an object"
                 << std::endl;
     }
@@ -68,16 +62,17 @@ void runTests() {
 
 void printReport() {
   std::cout << "=========================" << std::endl;
-  std::cout << "# expects       : " << numExpects << std::endl;
-  std::cout << "# asserts       : " << numAsserts << std::endl;
-  std::cout << "# expects failed: " << numExpectsFailed << std::endl;
-  std::cout << "# asserts failed: " << numAssertsFailed << std::endl;
-  std::cout << "# objects caught: " << numObjectsCaught << std::endl;
+  std::cout << "# expects       : " << internal::numExpects << std::endl;
+  std::cout << "# asserts       : " << internal::numAsserts << std::endl;
+  std::cout << "# expects failed: " << internal::numExpectsFailed << std::endl;
+  std::cout << "# asserts failed: " << internal::numAssertsFailed << std::endl;
+  std::cout << "# objects caught: " << internal::numObjectsCaught << std::endl;
   std::cout << "=========================" << std::endl;
 }
 
 void exit() {
-  if (numExpectsFailed || numAssertsFailed || numObjectsCaught) {
+  if (internal::numExpectsFailed || internal::numAssertsFailed ||
+      internal::numObjectsCaught) {
     std::cout << "[ FAILED  ]" << std::endl;
     std::exit(EXIT_FAILURE);
   }
