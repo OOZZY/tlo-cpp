@@ -93,8 +93,8 @@ target_compile_options(tlo-cpp-test-main PRIVATE ${private_compile_options}
 target_include_directories(tlo-cpp-test-main PUBLIC
   ${PROJECT_SOURCE_DIR}/include)
 
-set(tlo_cpp_test_sources damerau-levenshtein-test.cpp lcs-test.cpp
-  levenshtein-test.cpp test-test.cpp)
+set(tlo_cpp_test_sources damerau-levenshtein-test.cpp hash-test.cpp lcs-test.cpp
+  levenshtein-test.cpp stop-test.cpp string-test.cpp test-test.cpp)
 prepend(tlo_cpp_test_sources ${PROJECT_SOURCE_DIR}/test/
   ${tlo_cpp_test_sources})
 
