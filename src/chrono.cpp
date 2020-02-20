@@ -18,9 +18,9 @@ std::string toTimestamp(const std::tm &timeObject) {
   std::ostringstream oss;
 
   oss.fill('0');
-  oss << std::setw(4) << timeObject.tm_year;
+  oss << std::setw(4) << timeObject.tm_year + BASE_YEAR;
   oss << std::setw(1) << '-';
-  oss << std::setw(2) << timeObject.tm_mon;
+  oss << std::setw(2) << timeObject.tm_mon + 1;
   oss << std::setw(1) << '-';
   oss << std::setw(2) << timeObject.tm_mday;
   oss << std::setw(1) << ' ';
@@ -46,9 +46,6 @@ std::string toLocalTimestamp(std::time_t time) {
 
   std::memcpy(&localTimeObjectCopy, localTimeObject, sizeof(*localTimeObject));
   timeUniqueLock.unlock();
-
-  localTimeObjectCopy.tm_year += BASE_YEAR;
-  localTimeObjectCopy.tm_mon++;
 
   return toTimestamp(localTimeObjectCopy);
 }
