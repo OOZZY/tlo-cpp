@@ -17,7 +17,7 @@ int numAssertsFailed = 0;
 int numObjectsCaught = 0;
 
 namespace {
-bool test(bool isExpect, const char *testType, bool condition,
+bool test(bool isExpect, const char *suffix, bool condition,
           const char *conditionString, const char *file, int line,
           const char *testName) {
   if (isExpect) {
@@ -39,7 +39,7 @@ bool test(bool isExpect, const char *testType, bool condition,
       std::cout << "TLO_ASSERT";
     }
 
-    std::cout << testType << " failed: " << conditionString << std::endl;
+    std::cout << suffix << " failed: " << conditionString << std::endl;
   }
 
   return condition;

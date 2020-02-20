@@ -87,7 +87,7 @@ bool expectFalse(bool isExpect, bool condition, const char *conditionString,
 namespace internal {
 // Returns condition.
 template <class Left, class Right>
-bool test(bool isExpect, const char *testType, bool condition, const Left &left,
+bool test(bool isExpect, const char *suffix, bool condition, const Left &left,
           const char *leftString, const Right &right, const char *rightString,
           const char *file, int line, const char *testName) {
   if (isExpect) {
@@ -109,7 +109,7 @@ bool test(bool isExpect, const char *testType, bool condition, const Left &left,
       std::cout << "TLO_ASSERT_";
     }
 
-    std::cout << testType << " failed:" << std::endl;
+    std::cout << suffix << " failed:" << std::endl;
     std::cout << "Left Expression : " << leftString << std::endl;
     std::cout << "Left Value      : " << left << std::endl;
     std::cout << "Right Expression: " << rightString << std::endl;
