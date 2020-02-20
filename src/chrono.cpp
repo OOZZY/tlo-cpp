@@ -14,7 +14,7 @@ std::mutex timeMutex;
 constexpr int BASE_YEAR = 1900;
 }  // namespace
 
-std::string toTimestamp(const std::tm &timeObject) {
+std::string tmToTimestamp(const std::tm &timeObject) {
   std::ostringstream oss;
 
   oss.fill('0');
@@ -38,7 +38,7 @@ std::string toTimestamp(const std::tm &timeObject) {
   return oss.str();
 }
 
-std::string toLocalTimestamp(std::time_t time) {
+std::string timeToLocalTimestamp(std::time_t time) {
   std::tm localTimeObjectCopy;
 
   std::unique_lock<std::mutex> timeUniqueLock(timeMutex);
@@ -47,10 +47,10 @@ std::string toLocalTimestamp(std::time_t time) {
   std::memcpy(&localTimeObjectCopy, localTimeObject, sizeof(*localTimeObject));
   timeUniqueLock.unlock();
 
-  return toTimestamp(localTimeObjectCopy);
+  return tmToTimestamp(localTimeObjectCopy);
 }
 
-std::string toUtcTimestamp(std::time_t time) {
+std::string timeToUtcTimestamp(std::time_t time) {
   std::tm utcTimeObjectCopy;
 
   std::unique_lock<std::mutex> timeUniqueLock(timeMutex);
@@ -59,10 +59,10 @@ std::string toUtcTimestamp(std::time_t time) {
   std::memcpy(&utcTimeObjectCopy, utcTimeObject, sizeof(*utcTimeObject));
   timeUniqueLock.unlock();
 
-  return toTimestamp(utcTimeObjectCopy);
+  return tmToTimestamp(utcTimeObjectCopy);
 }
 
-void toTm(std::tm &timeObject, const std::string &timestamp) {
+void timestampToTm(std::tm &timeObject, const std::string &timestamp) {
   std::istringstream iss(timestamp);
 
   iss >> timeObject.tm_year;
@@ -92,22 +92,22 @@ void toTm(std::tm &timeObject, const std::string &timestamp) {
   timeObject.tm_mon--;
 }
 
-std::time_t toTimeT(const std::string &localTimestamp) {
+std::time_t localTimestampToTime(const std::string &localTimestamp) {
   std::tm localTimeObject;
 
-  toTm(localTimeObject, localTimestamp);
+  timestampToTm(localTimeObject, localTimestamp);
   return std::mktime(&localTimeObject);
 }
 
-bool equalTimestamps(const std::string &localTimestamp1,
-                     const std::string &localTimestamp2,
-                     int maxSecondDifference) {
+bool equalLocalTimestamps(const std::string &localTimestamp1,
+                          const std::string &localTimestamp2,
+                          int maxSecondDifference) {
   if (localTimestamp1 == localTimestamp2) {
     return true;
   }
 
-  std::time_t time1 = toTimeT(localTimestamp1);
-  std::time_t time2 = toTimeT(localTimestamp2);
+  std::time_t time1 = localTimestampToTime(localTimestamp1);
+  std::time_t time2 = localTimestampToTime(localTimestamp2);
   double secondsDifference = std::abs(std::difftime(time1, time2));
 
   return secondsDifference <= maxSecondDifference;
