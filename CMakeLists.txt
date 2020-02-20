@@ -60,8 +60,9 @@ macro(prepend listVar prefix)
   endforeach(item)
 endmacro(prepend)
 
-set(tlo_cpp_headers chrono.hpp damerau-levenshtein.hpp filesystem.hpp hash.hpp
-  lcs.hpp levenshtein.hpp options.hpp sqlite3.hpp stop.hpp string.hpp)
+set(tlo_cpp_headers chrono.hpp command-line.hpp damerau-levenshtein.hpp
+  filesystem.hpp hash.hpp lcs.hpp levenshtein.hpp sqlite3.hpp stop.hpp
+  string.hpp)
 prepend(tlo_cpp_headers ${PROJECT_SOURCE_DIR}/include/tlo-cpp/
   ${tlo_cpp_headers})
 
@@ -69,9 +70,9 @@ set(tlo_cpp_private_headers container.hpp)
 prepend(tlo_cpp_private_headers ${PROJECT_SOURCE_DIR}/src/
   ${tlo_cpp_private_headers})
 
-set(tlo_cpp_sources chrono.cpp container.cpp damerau-levenshtein.cpp
-  filesystem.cpp hash.cpp lcs.cpp levenshtein.cpp options.cpp sqlite3.cpp
-  stop.cpp string.cpp)
+set(tlo_cpp_sources chrono.cpp command-line.cpp container.cpp
+  damerau-levenshtein.cpp filesystem.cpp hash.cpp lcs.cpp levenshtein.cpp
+  sqlite3.cpp stop.cpp string.cpp)
 prepend(tlo_cpp_sources ${PROJECT_SOURCE_DIR}/src/ ${tlo_cpp_sources})
 
 add_library(tlo-cpp STATIC ${tlo_cpp_headers} ${tlo_cpp_private_headers}

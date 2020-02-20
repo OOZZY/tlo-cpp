@@ -1,5 +1,5 @@
-#ifndef TLO_CPP_OPTIONS_HPP
-#define TLO_CPP_OPTIONS_HPP
+#ifndef TLO_CPP_COMMAND_LINE_HPP
+#define TLO_CPP_COMMAND_LINE_HPP
 
 #include <climits>
 #include <map>
@@ -67,4 +67,4 @@ class CommandLine {
 std::ostream &operator<<(std::ostream &ostream, const CommandLine &arguments);
 }  // namespace tlo
 
-#endif  // TLO_CPP_OPTIONS_HPP
+#endif  // TLO_CPP_COMMAND_LINE_HPP
