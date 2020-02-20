@@ -50,6 +50,18 @@ std::string toLocalTimestamp(std::time_t time) {
   return toTimestamp(localTimeObjectCopy);
 }
 
+std::string toUtcTimestamp(std::time_t time) {
+  std::tm utcTimeObjectCopy;
+
+  std::unique_lock<std::mutex> timeUniqueLock(timeMutex);
+  std::tm *utcTimeObject = std::gmtime(&time);
+
+  std::memcpy(&utcTimeObjectCopy, utcTimeObject, sizeof(*utcTimeObject));
+  timeUniqueLock.unlock();
+
+  return toTimestamp(utcTimeObjectCopy);
+}
+
 void toTm(std::tm &timeObject, const std::string &timestamp) {
   std::istringstream iss(timestamp);
 

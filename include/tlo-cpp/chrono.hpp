@@ -62,9 +62,17 @@ std::string toTimestamp(const std::tm &timeObject);
 
 // Calls std::localtime(&time) then passes the resulting std::tm object to
 // toTimestamp(). Returns the timestamp. Thread-safe when called in multiple
-// threads concurrently. Not thread-safe when called concurrently with other
+// threads concurrently. Thread-safe when called concurrently with
+// toUtcTimestamp(). Not thread-safe when called concurrently with other
 // functions that also call std::localTime(), std::gmtime(), or std::ctime().
 std::string toLocalTimestamp(std::time_t time);
+
+// Calls std::gmtime(&time) then passes the resulting std::tm object to
+// toTimestamp(). Returns the timestamp. Thread-safe when called in multiple
+// threads concurrently. Thread-safe when called concurrently with
+// toLocalTimestamp(). Not thread-safe when called concurrently with other
+// functions that also call std::localTime(), std::gmtime(), or std::ctime().
+std::string toUtcTimestamp(std::time_t time);
 
 // Fills the tm according to the given timestamp. Assumes timestamp is in the
 // format returned by toTimestamp(). Throws std::runtime_error if timestamp
