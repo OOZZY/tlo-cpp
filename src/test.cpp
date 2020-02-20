@@ -68,11 +68,11 @@ void runTests() {
     } catch (const std::exception &e) {
       ++internal::numObjectsCaught;
       std::cout << e.what() << std::endl;
-      std::cout << "[ ERROR   ] " << test->testName() << " threw an exception"
+      std::cout << "[ ERROR   ] " << test->testName() << " threw an exception."
                 << std::endl;
     } catch (...) {
       ++internal::numObjectsCaught;
-      std::cout << "[ ERROR   ] " << test->testName() << " threw an object"
+      std::cout << "[ ERROR   ] " << test->testName() << " threw an object."
                 << std::endl;
     }
   }
@@ -80,11 +80,11 @@ void runTests() {
 
 void printReport() {
   std::cout << "=========================" << std::endl;
-  std::cout << "# expects       : " << internal::numExpects << std::endl;
-  std::cout << "# asserts       : " << internal::numAsserts << std::endl;
-  std::cout << "# expects failed: " << internal::numExpectsFailed << std::endl;
-  std::cout << "# asserts failed: " << internal::numAssertsFailed << std::endl;
-  std::cout << "# objects caught: " << internal::numObjectsCaught << std::endl;
+  std::cout << "# Expects       : " << internal::numExpects << std::endl;
+  std::cout << "# Asserts       : " << internal::numAsserts << std::endl;
+  std::cout << "# Expects failed: " << internal::numExpectsFailed << std::endl;
+  std::cout << "# Asserts failed: " << internal::numAssertsFailed << std::endl;
+  std::cout << "# Objects caught: " << internal::numObjectsCaught << std::endl;
   std::cout << "=========================" << std::endl;
 }
 
