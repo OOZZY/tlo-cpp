@@ -13,6 +13,30 @@ std::mutex timeMutex;
 constexpr int BASE_YEAR = 1900;
 }  // namespace
 
+std::string toTimestamp(const std::tm &timeObject) {
+  std::ostringstream oss;
+
+  oss.fill('0');
+  oss << std::setw(4) << timeObject.tm_year;
+  oss << std::setw(1) << '-';
+  oss << std::setw(2) << timeObject.tm_mon;
+  oss << std::setw(1) << '-';
+  oss << std::setw(2) << timeObject.tm_mday;
+  oss << std::setw(1) << ' ';
+  oss << std::setw(2) << timeObject.tm_hour;
+  oss << std::setw(1) << ':';
+  oss << std::setw(2) << timeObject.tm_min;
+  oss << std::setw(1) << ':';
+  oss << std::setw(2) << timeObject.tm_sec;
+  oss << std::setw(1) << ' ';
+  oss << std::setw(3) << timeObject.tm_yday;
+  oss << std::setw(1) << ' ';
+  oss << std::setw(1) << timeObject.tm_wday;
+  oss << std::setw(1) << ' ';
+  oss << std::setw(1) << timeObject.tm_isdst;
+  return oss.str();
+}
+
 std::string toLocalTimestamp(std::time_t time) {
   std::tm localTimeObjectCopy;
 
@@ -25,27 +49,7 @@ std::string toLocalTimestamp(std::time_t time) {
   localTimeObjectCopy.tm_year += BASE_YEAR;
   localTimeObjectCopy.tm_mon++;
 
-  std::ostringstream oss;
-
-  oss.fill('0');
-  oss << std::setw(4) << localTimeObjectCopy.tm_year;
-  oss << std::setw(1) << '-';
-  oss << std::setw(2) << localTimeObjectCopy.tm_mon;
-  oss << std::setw(1) << '-';
-  oss << std::setw(2) << localTimeObjectCopy.tm_mday;
-  oss << std::setw(1) << ' ';
-  oss << std::setw(2) << localTimeObjectCopy.tm_hour;
-  oss << std::setw(1) << ':';
-  oss << std::setw(2) << localTimeObjectCopy.tm_min;
-  oss << std::setw(1) << ':';
-  oss << std::setw(2) << localTimeObjectCopy.tm_sec;
-  oss << std::setw(1) << ' ';
-  oss << std::setw(3) << localTimeObjectCopy.tm_yday;
-  oss << std::setw(1) << ' ';
-  oss << std::setw(1) << localTimeObjectCopy.tm_wday;
-  oss << std::setw(1) << ' ';
-  oss << std::setw(1) << localTimeObjectCopy.tm_isdst;
-  return oss.str();
+  return toTimestamp(localTimeObjectCopy);
 }
 
 void toTm(std::tm &timeObject, const std::string &timestamp) {

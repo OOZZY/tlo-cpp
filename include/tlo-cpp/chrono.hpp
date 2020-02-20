@@ -55,22 +55,25 @@ DstTimePoint convertTimePoint(
   return dstNow + std::chrono::duration_cast<DstDuration>(timePoint - srcNow);
 }
 
-// Calls std::localtime(&time) then converts the resulting std::tm object into
-// a timestamp that preserves all the fields of the std::tm object. The
-// beginning of the timestamp is in "%Y-%m-%d %H:%M:%S" format. Returns the
-// timestamp. Thread-safe when called in multiple threads concurrently. Not
-// thread-safe when called concurrently with other functions that also call
-// std::localTime(), std::gmtime(), or std::ctime().
+// Converts timeObject to a timestamp that preserves all the fields of the
+// std::tm object. The beginning of the timestamp is in "%Y-%m-%d %H:%M:%S"
+// format. Returns the timestamp.
+std::string toTimestamp(const std::tm &timeObject);
+
+// Calls std::localtime(&time) then passes the resulting std::tm object to
+// toTimestamp(). Returns the timestamp. Thread-safe when called in multiple
+// threads concurrently. Not thread-safe when called concurrently with other
+// functions that also call std::localTime(), std::gmtime(), or std::ctime().
 std::string toLocalTimestamp(std::time_t time);
 
 // Fills the tm according to the given timestamp. Assumes timestamp is in the
-// format returned by toLocalTimestamp(). Throws std::runtime_error if
-// timestamp fails parsing.
+// format returned by toTimestamp(). Throws std::runtime_error if timestamp
+// fails parsing. This function does the reverse of toTimestamp().
 void toTm(std::tm &timeObject, const std::string &timestamp);
 
 // Calls toTm(..., localTimestamp) then passes the filled std::tm object to
-// std::mktime() and returns the result. This function does the reverse of
-// toLocalTimestamp().
+// std::mktime() and returns the result. Assumes localTimestamp was generated
+// by toLocalTimestamp(). This function does the reverse of toLocalTimestamp().
 std::time_t toTimeT(const std::string &localTimestamp);
 
 // Returns whether the given timestamps differ by at most maxSecondDifference
