@@ -13,11 +13,11 @@ std::mutex timeMutex;
 constexpr int BASE_YEAR = 1900;
 }  // namespace
 
-std::string toLocalTimestamp(std::time_t localTime) {
+std::string toLocalTimestamp(std::time_t time) {
   std::tm localTimeObjectCopy;
 
   std::unique_lock<std::mutex> timeUniqueLock(timeMutex);
-  std::tm *localTimeObject = std::localtime(&localTime);
+  std::tm *localTimeObject = std::localtime(&time);
 
   std::memcpy(&localTimeObjectCopy, localTimeObject, sizeof(*localTimeObject));
   timeUniqueLock.unlock();
@@ -48,34 +48,34 @@ std::string toLocalTimestamp(std::time_t localTime) {
   return oss.str();
 }
 
-void toTm(std::tm &localTimeObject, const std::string &localTimestamp) {
-  std::istringstream iss(localTimestamp);
+void toTm(std::tm &timeObject, const std::string &timestamp) {
+  std::istringstream iss(timestamp);
 
-  iss >> localTimeObject.tm_year;
+  iss >> timeObject.tm_year;
   iss.ignore(1);
-  iss >> localTimeObject.tm_mon;
+  iss >> timeObject.tm_mon;
   iss.ignore(1);
-  iss >> localTimeObject.tm_mday;
+  iss >> timeObject.tm_mday;
   iss.ignore(1);
-  iss >> localTimeObject.tm_hour;
+  iss >> timeObject.tm_hour;
   iss.ignore(1);
-  iss >> localTimeObject.tm_min;
+  iss >> timeObject.tm_min;
   iss.ignore(1);
-  iss >> localTimeObject.tm_sec;
+  iss >> timeObject.tm_sec;
   iss.ignore(1);
-  iss >> localTimeObject.tm_yday;
+  iss >> timeObject.tm_yday;
   iss.ignore(1);
-  iss >> localTimeObject.tm_wday;
+  iss >> timeObject.tm_wday;
   iss.ignore(1);
-  iss >> localTimeObject.tm_isdst;
+  iss >> timeObject.tm_isdst;
 
   if (iss.fail()) {
-    throw std::runtime_error("Error: Failed to parse timestamp \"" +
-                             localTimestamp + "\".");
+    throw std::runtime_error("Error: Failed to parse timestamp \"" + timestamp +
+                             "\".");
   }
 
-  localTimeObject.tm_year -= BASE_YEAR;
-  localTimeObject.tm_mon--;
+  timeObject.tm_year -= BASE_YEAR;
+  timeObject.tm_mon--;
 }
 
 std::time_t toTimeT(const std::string &localTimestamp) {
