@@ -1,5 +1,6 @@
 #include "tlo-cpp/command-line.hpp"
 
+#include <cassert>
 #include <exception>
 #include <filesystem>
 #include <stdexcept>
@@ -15,8 +16,13 @@ std::ostream &operator<<(std::ostream &ostream, const OptionDetails &details) {
          << ", lastIndex: " << details.lastIndex << '}';
 }
 
+bool operator==(const OptionDetails &details1, const OptionDetails &details2) {
+  return details1.values == details2.values &&
+         details1.lastIndex == details2.lastIndex;
+}
+
 CommandLine::CommandLine(
-    int argc, char **argv,
+    int argc, const char **argv,
     const std::map<std::string, OptionAttributes> &validOptions)
     : validOptions_(validOptions) {
   program_ = fs::path(argv[0]).stem().string();
@@ -24,37 +30,64 @@ CommandLine::CommandLine(
   for (int i = 1; i < argc; ++i) {
     std::string argument = argv[i];
 
-    if (argument.size() >= 3 && argument[0] == '-' && argument[1] == '-') {
-      auto equalPosition = argument.find("=");
+    if (!(argument.size() >= 3 && argument[0] == '-' && argument[1] == '-')) {
+      arguments_.push_back(std::move(argument));
+      continue;
+    }
 
-      if (equalPosition == std::string::npos) {
-        if (validOptions_.find(argument) == validOptions_.end()) {
-          throw std::runtime_error("Error: \"" + argument +
-                                   "\" is not a valid option.");
-        }
+    auto equalPosition = argument.find("=");
 
+    if (equalPosition == std::string::npos) {
+      const auto iterator = validOptions_.find(argument);
+
+      if (iterator == validOptions_.end()) {
+        throw std::runtime_error("Error: \"" + argument +
+                                 "\" is not a valid option.");
+      }
+
+      const auto &attributes = iterator->second;
+
+      if (!attributes.valueRequired) {
         OptionDetails &details = options_[std::move(argument)];
 
         details.values.push_back("");
         details.lastIndex = i;
-      } else {
-        std::string option = argument.substr(0, equalPosition);
-
-        if (validOptions_.find(option) == validOptions_.end()) {
-          throw std::runtime_error("Error: \"" + option +
-                                   "\" is not a valid option.");
-        }
-
-        auto nextPosition = equalPosition + 1;
-        auto value =
-            argument.substr(nextPosition, argument.size() - nextPosition);
-        OptionDetails &details = options_[std::move(option)];
-
-        details.values.push_back(std::move(value));
-        details.lastIndex = i;
+        continue;
       }
+
+      if (i + 1 >= argc) {
+        throw std::runtime_error("Error: Option \"" + argument +
+                                 "\" requires a value.");
+      }
+
+      OptionDetails &details = options_[std::move(argument)];
+
+      i++;
+      details.values.push_back(argv[i]);
+      details.lastIndex = i - 1;
     } else {
-      arguments_.push_back(std::move(argument));
+      std::string option = argument.substr(0, equalPosition);
+      const auto iterator = validOptions_.find(option);
+
+      if (iterator == validOptions_.end()) {
+        throw std::runtime_error("Error: \"" + option +
+                                 "\" is not a valid option.");
+      }
+
+      const auto &attributes = iterator->second;
+
+      if (!attributes.valueRequired) {
+        throw std::runtime_error("Error: Option \"" + option +
+                                 "\" does not take values.");
+      }
+
+      auto nextPosition = equalPosition + 1;
+      auto value =
+          argument.substr(nextPosition, argument.size() - nextPosition);
+      OptionDetails &details = options_[std::move(option)];
+
+      details.values.push_back(std::move(value));
+      details.lastIndex = i;
     }
   }
 }
@@ -118,6 +151,8 @@ Integer getOptionsValueAsInteger(
     const CommandLine &commandLine, const std::string &option, Integer minValue,
     Integer maxValue,
     Integer (*stringToInteger)(const std::string &, std::size_t *, int)) {
+  assert(minValue <= maxValue);
+
   const std::string &string = commandLine.getOptionValue(option);
   Integer value;
 

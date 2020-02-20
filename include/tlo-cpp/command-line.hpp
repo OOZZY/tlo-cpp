@@ -15,6 +15,7 @@ struct OptionDetails {
 };
 
 std::ostream &operator<<(std::ostream &ostream, const OptionDetails &details);
+bool operator==(const OptionDetails &details1, const OptionDetails &details2);
 
 struct OptionAttributes {
   bool valueRequired;
@@ -36,7 +37,7 @@ class CommandLine {
   std::map<std::string, OptionAttributes> validOptions_;
 
  public:
-  CommandLine(int argc, char **argv,
+  CommandLine(int argc, const char **argv,
               const std::map<std::string, OptionAttributes> &validOptions = {});
 
   const std::string &program() const;
