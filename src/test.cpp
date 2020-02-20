@@ -16,8 +16,8 @@ int numExpectsFailed = 0;
 int numAssertsFailed = 0;
 int numObjectsCaught = 0;
 
-bool expect(bool isExpect, bool condition, const char *file, int line,
-            const char *func, const char *conditionString) {
+bool expect(bool isExpect, bool condition, const char *conditionString,
+            const char *file, int line, const char *testName) {
   if (isExpect) {
     ++numExpects;
   } else {
@@ -25,15 +25,19 @@ bool expect(bool isExpect, bool condition, const char *file, int line,
   }
 
   if (!condition) {
+    std::cout << file << ":" << line << ": " << testName << ": ";
+
     if (isExpect) {
       ++numExpectsFailed;
-      std::cout << file << ":" << line << ": " << func
-                << ": expect failed: " << conditionString << "." << std::endl;
+
+      std::cout << "TLO_EXPECT";
     } else {
       ++numAssertsFailed;
-      std::cout << file << ":" << line << ": " << func
-                << ": assert failed: " << conditionString << "." << std::endl;
+
+      std::cout << "TLO_ASSERT";
     }
+
+    std::cout << " failed: " << conditionString << std::endl;
   }
 
   return condition;
