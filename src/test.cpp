@@ -16,8 +16,10 @@ int numExpectsFailed = 0;
 int numAssertsFailed = 0;
 int numObjectsCaught = 0;
 
-bool expect(bool isExpect, bool condition, const char *conditionString,
-            const char *file, int line, const char *testName) {
+namespace {
+bool test(bool isExpect, const char *testType, bool condition,
+          const char *conditionString, const char *file, int line,
+          const char *testName) {
   if (isExpect) {
     ++numExpects;
   } else {
@@ -37,10 +39,22 @@ bool expect(bool isExpect, bool condition, const char *conditionString,
       std::cout << "TLO_ASSERT";
     }
 
-    std::cout << " failed: " << conditionString << std::endl;
+    std::cout << testType << " failed: " << conditionString << std::endl;
   }
 
   return condition;
+}
+}  // namespace
+
+bool expect(bool isExpect, bool condition, const char *conditionString,
+            const char *file, int line, const char *testName) {
+  return test(isExpect, "", condition, conditionString, file, line, testName);
+}
+
+bool expectFalse(bool isExpect, bool condition, const char *conditionString,
+                 const char *file, int line, const char *testName) {
+  return test(isExpect, "_FALSE", !condition, conditionString, file, line,
+              testName);
 }
 }  // namespace internal
 

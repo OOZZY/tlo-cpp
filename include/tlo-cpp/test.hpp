@@ -54,6 +54,10 @@ extern int numObjectsCaught;
 // Returns condition.
 bool expect(bool isExpect, bool condition, const char *conditionString,
             const char *file, int line, const char *testName);
+
+// Returns !condition.
+bool expectFalse(bool isExpect, bool condition, const char *conditionString,
+                 const char *file, int line, const char *testName);
 }  // namespace internal
 
 #define TLO_EXPECT(condition)                                            \
@@ -66,6 +70,18 @@ bool expect(bool isExpect, bool condition, const char *conditionString,
                                        __FILE__, __LINE__, testName())) { \
       return;                                                             \
     }                                                                     \
+  } while (0)
+
+#define TLO_EXPECT_FALSE(condition)                                           \
+  ::tlo::test::internal::expectFalse(true, (condition), #condition, __FILE__, \
+                                     __LINE__, testName())
+
+#define TLO_ASSERT_FALSE(condition)                                            \
+  do {                                                                         \
+    if (!::tlo::test::internal::expectFalse(false, (condition), #condition,    \
+                                            __FILE__, __LINE__, testName())) { \
+      return;                                                                  \
+    }                                                                          \
   } while (0)
 
 namespace internal {
