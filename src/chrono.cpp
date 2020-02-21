@@ -145,9 +145,9 @@ bool equalLocalTimestamps(const std::string &localTimestamp1,
 
   std::time_t time1 = localTimestampToTime(localTimestamp1);
   std::time_t time2 = localTimestampToTime(localTimestamp2);
-  double secondsDifference = std::abs(std::difftime(time1, time2));
+  double secondsDifference = std::difftime(time1, time2);
 
-  return secondsDifference <= maxSecondDifference;
+  return std::abs(secondsDifference) <= std::abs(maxSecondDifference);
 }
 
 bool equalUtcTimestamps(const std::string &utcTimestamp1,
@@ -159,8 +159,8 @@ bool equalUtcTimestamps(const std::string &utcTimestamp1,
 
   std::time_t time1 = utcTimestampToTime(utcTimestamp1);
   std::time_t time2 = utcTimestampToTime(utcTimestamp2);
-  double secondsDifference = std::abs(std::difftime(time1, time2));
+  double secondsDifference = std::difftime(time1, time2);
 
-  return secondsDifference <= maxSecondDifference;
+  return std::abs(secondsDifference) <= std::abs(maxSecondDifference);
 }
 }  // namespace tlo
