@@ -11,16 +11,29 @@ find_package(SQLite3 REQUIRED)
 
 set(private_compile_options "")
 set(public_compile_options "")
-set(public_link_libraries Threads::Threads SQLite::SQLite3)
+set(public_link_libraries
+  Threads::Threads
+  SQLite::SQLite3
+)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  list(APPEND private_compile_options -pedantic -Wall -Wextra -Werror)
+  list(APPEND private_compile_options
+    -pedantic
+    -Wall
+    -Wextra
+    -Werror
+  )
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  list(APPEND private_compile_options -Weverything -Wno-c++98-compat -Wno-padded
-    -Wno-exit-time-destructors -Wno-global-constructors)
+  list(APPEND private_compile_options
+    -Weverything
+    -Wno-c++98-compat
+    -Wno-padded
+    -Wno-exit-time-destructors
+    -Wno-global-constructors
+  )
 endif()
 
 option(TLO_CPP_COLORED_DIAGNOSTICS
@@ -60,45 +73,86 @@ macro(prepend listVar prefix)
   endforeach(item)
 endmacro(prepend)
 
-set(tlo_cpp_headers chrono.hpp command-line.hpp damerau-levenshtein.hpp
-  filesystem.hpp hash.hpp lcs.hpp levenshtein.hpp sqlite3.hpp stop.hpp
-  string.hpp)
-prepend(tlo_cpp_headers ${PROJECT_SOURCE_DIR}/include/tlo-cpp/
-  ${tlo_cpp_headers})
+set(tlo_cpp_headers
+  chrono.hpp
+  command-line.hpp
+  damerau-levenshtein.hpp
+  filesystem.hpp
+  hash.hpp
+  lcs.hpp
+  levenshtein.hpp
+  sqlite3.hpp
+  stop.hpp
+  string.hpp
+)
+prepend(tlo_cpp_headers
+  ${PROJECT_SOURCE_DIR}/include/tlo-cpp/ ${tlo_cpp_headers}
+)
 
 set(tlo_cpp_private_headers container.hpp)
-prepend(tlo_cpp_private_headers ${PROJECT_SOURCE_DIR}/src/
-  ${tlo_cpp_private_headers})
+prepend(tlo_cpp_private_headers
+  ${PROJECT_SOURCE_DIR}/src/ ${tlo_cpp_private_headers}
+)
 
-set(tlo_cpp_sources chrono.cpp command-line.cpp container.cpp
-  damerau-levenshtein.cpp filesystem.cpp hash.cpp lcs.cpp levenshtein.cpp
-  sqlite3.cpp stop.cpp string.cpp)
+set(tlo_cpp_sources
+  chrono.cpp
+  command-line.cpp
+  container.cpp
+  damerau-levenshtein.cpp
+  filesystem.cpp
+  hash.cpp
+  lcs.cpp
+  levenshtein.cpp
+  sqlite3.cpp
+  stop.cpp
+  string.cpp
+)
 prepend(tlo_cpp_sources ${PROJECT_SOURCE_DIR}/src/ ${tlo_cpp_sources})
 
-add_library(tlo-cpp STATIC ${tlo_cpp_headers} ${tlo_cpp_private_headers}
-  ${tlo_cpp_sources})
+add_library(tlo-cpp STATIC
+  ${tlo_cpp_headers}
+  ${tlo_cpp_private_headers}
+  ${tlo_cpp_sources}
+)
 set_target_properties(tlo-cpp PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp PUBLIC cxx_std_17)
-target_compile_options(tlo-cpp PRIVATE ${private_compile_options}
-  PUBLIC ${public_compile_options})
+target_compile_options(tlo-cpp
+  PRIVATE ${private_compile_options}
+  PUBLIC ${public_compile_options}
+)
 target_include_directories(tlo-cpp PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
 
 add_library(tlo-cpp-test-main STATIC
   ${PROJECT_SOURCE_DIR}/include/tlo-cpp/test.hpp
-  ${PROJECT_SOURCE_DIR}/src/test.cpp ${PROJECT_SOURCE_DIR}/src/test-main.cpp)
+  ${PROJECT_SOURCE_DIR}/src/test.cpp
+  ${PROJECT_SOURCE_DIR}/src/test-main.cpp
+)
 set_target_properties(tlo-cpp-test-main PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp-test-main PUBLIC cxx_std_17)
-target_compile_options(tlo-cpp-test-main PRIVATE ${private_compile_options}
-  PUBLIC ${public_compile_options})
-target_include_directories(tlo-cpp-test-main PUBLIC
-  ${PROJECT_SOURCE_DIR}/include)
+target_compile_options(tlo-cpp-test-main
+  PRIVATE ${private_compile_options}
+  PUBLIC ${public_compile_options}
+)
+target_include_directories(tlo-cpp-test-main
+  PUBLIC ${PROJECT_SOURCE_DIR}/include
+)
 
-set(tlo_cpp_test_sources chrono-test.cpp command-line-test.cpp
-  damerau-levenshtein-test.cpp hash-test.cpp lcs-test.cpp levenshtein-test.cpp
-  sqlite3-test.cpp stop-test.cpp string-test.cpp test-test.cpp)
-prepend(tlo_cpp_test_sources ${PROJECT_SOURCE_DIR}/test/
-  ${tlo_cpp_test_sources})
+set(tlo_cpp_test_sources
+  chrono-test.cpp
+  command-line-test.cpp
+  damerau-levenshtein-test.cpp
+  hash-test.cpp
+  lcs-test.cpp
+  levenshtein-test.cpp
+  sqlite3-test.cpp
+  stop-test.cpp
+  string-test.cpp
+  test-test.cpp
+)
+prepend(tlo_cpp_test_sources
+  ${PROJECT_SOURCE_DIR}/test/ ${tlo_cpp_test_sources}
+)
 
 add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
 set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
