@@ -59,12 +59,16 @@ option(TLO_CPP_LINK_FS
   "Link to filesystem library of older GNU and Clang (GNU/Clang only)." OFF
 )
 if (TLO_CPP_LINK_FS)
-  if (TLO_CPP_USE_LIBCPP)
-    # Prior to LLVM 9, using std::filesystem required linker option -lc++fs.
-    list(APPEND public_link_libraries c++fs)
-  else()
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Prior to GCC 9, using std::filesystem required linker option -lstdc++fs.
     list(APPEND public_link_libraries stdc++fs)
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    if (TLO_CPP_USE_LIBCPP)
+      # Prior to LLVM 9, using std::filesystem required linker option -lc++fs.
+      list(APPEND public_link_libraries c++fs)
+    else()
+      list(APPEND public_link_libraries stdc++fs)
+    endif()
   endif()
 endif()
 
