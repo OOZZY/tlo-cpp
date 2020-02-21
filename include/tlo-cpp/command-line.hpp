@@ -37,7 +37,7 @@ class CommandLine {
   std::map<std::string, OptionAttributes> validOptions_;
 
  public:
-  CommandLine(int argc, const char **argv,
+  CommandLine(int argc, char **argv,
               const std::map<std::string, OptionAttributes> &validOptions = {});
 
   const std::string &program() const;

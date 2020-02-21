@@ -22,7 +22,7 @@ bool operator==(const OptionDetails &details1, const OptionDetails &details2) {
 }
 
 CommandLine::CommandLine(
-    int argc, const char **argv,
+    int argc, char **argv,
     const std::map<std::string, OptionAttributes> &validOptions)
     : validOptions_(validOptions) {
   program_ = fs::path(argv[0]).stem().string();
