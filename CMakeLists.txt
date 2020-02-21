@@ -37,7 +37,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 option(TLO_CPP_COLORED_DIAGNOSTICS
-  "Tell the compiler to use colors in diagnostics (GNU/Clang only)." ON)
+  "Tell the compiler to use colors in diagnostics (GNU/Clang only)." ON
+)
 if (TLO_CPP_COLORED_DIAGNOSTICS)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     list(APPEND private_compile_options -fdiagnostics-color)
@@ -55,7 +56,8 @@ if (TLO_CPP_USE_LIBCPP)
 endif()
 
 option(TLO_CPP_LINK_FS
-  "Link to filesystem library of older GNU and Clang (GNU/Clang only)." OFF)
+  "Link to filesystem library of older GNU and Clang (GNU/Clang only)." OFF
+)
 if (TLO_CPP_LINK_FS)
   if (TLO_CPP_USE_LIBCPP)
     # Prior to LLVM 9, using std::filesystem required linker option -lc++fs.
