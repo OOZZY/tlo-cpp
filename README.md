@@ -51,13 +51,13 @@ $ ./tlo-cpp-test
 
 ## CMake Options
 
-* TLO\_CPP_\_COLORED\_DIAGNOSTICS
+* TLO\_CPP\_COLORED\_DIAGNOSTICS
     * Tell the compiler to use colors in diagnostics (GNU/Clang only)
     * On by default
-* TLO\_CPP_\_USE\_LIBCPP
+* TLO\_CPP\_USE\_LIBCPP
     * Use libc++ (Clang only)
     * Off by default
-* TLO\_CPP_\_LINK\_FS
+* TLO\_CPP\_LINK\_FS
     * Link to filesystem library of older GNU and Clang (GNU/Clang only)
     * Prior to LLVM 9, using `std::filesystem` required linker option `-lc++fs`
     * Prior to GCC 9, using `std::filesystem` required linker option `-lstdc++fs`
