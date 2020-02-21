@@ -96,7 +96,7 @@ target_include_directories(tlo-cpp-test-main PUBLIC
 
 set(tlo_cpp_test_sources chrono-test.cpp command-line-test.cpp
   damerau-levenshtein-test.cpp hash-test.cpp lcs-test.cpp levenshtein-test.cpp
-  stop-test.cpp string-test.cpp test-test.cpp)
+  sqlite3-test.cpp stop-test.cpp string-test.cpp test-test.cpp)
 prepend(tlo_cpp_test_sources ${PROJECT_SOURCE_DIR}/test/
   ${tlo_cpp_test_sources})
 
