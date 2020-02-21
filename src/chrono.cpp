@@ -118,7 +118,7 @@ std::time_t addOffset(std::time_t time) {
     timeWithOffsetAdded = time + (time - timeWithOffsetSubtracted);
   } else if (time < timeWithOffsetSubtracted) {
     timeWithOffsetAdded = time - (timeWithOffsetSubtracted - time);
-  } else if (time == timeWithOffsetSubtracted) {
+  } else {
     timeWithOffsetAdded = time;
   }
 
