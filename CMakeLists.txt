@@ -2,18 +2,35 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 project("tlo-cpp")
 enable_testing()
 
+set(private_compile_options "")
+set(public_compile_options "")
+set(public_include_directories ${PROJECT_SOURCE_DIR}/include)
+set(public_link_libraries "")
+
 if (UNIX)
   # Threads required. See CMake documentation on FindThreads module.
   set(CMAKE_THREAD_PREFER_PTHREAD ON)
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
+  list(APPEND public_link_libraries Threads::Threads)
 endif()
 
-find_package(SQLite3 REQUIRED)
+set(TLO_CPP_SQLITE3_INCLUDE_DIRS ""
+  CACHE STRING "Include directories containing SQLite 3 headers."
+)
 
-set(private_compile_options "")
-set(public_compile_options "")
-set(public_link_libraries SQLite::SQLite3)
+set(TLO_CPP_SQLITE3_LIBRARIES ""
+  CACHE STRING "Libraries to link against to use SQLite 3."
+)
+
+if ("${TLO_CPP_SQLITE3_INCLUDE_DIRS}" STREQUAL "" OR
+    "${TLO_CPP_SQLITE3_LIBRARIES}" STREQUAL "")
+  find_package(SQLite3 REQUIRED)
+  list(APPEND public_link_libraries SQLite::SQLite3)
+else()
+  list(APPEND public_include_directories ${TLO_CPP_SQLITE3_INCLUDE_DIRS})
+  list(APPEND public_link_libraries ${TLO_CPP_SQLITE3_LIBRARIES})
+endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -33,10 +50,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     -Wno-exit-time-destructors
     -Wno-global-constructors
   )
-endif()
-
-if (UNIX)
-  list(APPEND public_link_libraries Threads::Threads)
 endif()
 
 option(TLO_CPP_COLORED_DIAGNOSTICS
@@ -129,7 +142,7 @@ target_compile_options(tlo-cpp
   PRIVATE ${private_compile_options}
   PUBLIC ${public_compile_options}
 )
-target_include_directories(tlo-cpp PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(tlo-cpp PUBLIC ${public_include_directories})
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
 
 add_library(tlo-cpp-test-main STATIC
