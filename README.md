@@ -65,8 +65,8 @@ $ ./tlo-cpp-test
       `-lstdc++fs`
     * Off by default
 * TLO\_CPP\_SQLITE3\_INCLUDE\_DIRS and TLO\_CPP\_SQLITE3\_LIBRARIES
-    * If both are specified, will search for SQLite 3 headers in the directories
-      specified by TLO\_CPP\_SQLITE3\_INCLUDE\_DIRS and will link to the
-      libraries specified by TLO\_CPP\_SQLITE3\_LIBRARIES
+    * If both are specified (non-empty strings), will search for SQLite 3
+      headers in the directories specified by TLO\_CPP\_SQLITE3\_INCLUDE\_DIRS
+      and will link to the libraries specified by TLO\_CPP\_SQLITE3\_LIBRARIES
     * Otherwise, `find_package(SQLite3 REQUIRED)` will be used instead
     * Empty strings by default
