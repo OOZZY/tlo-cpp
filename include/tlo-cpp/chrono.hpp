@@ -20,9 +20,11 @@ constexpr Duration absDuration(const Duration d) noexcept {
 }
 }  // namespace internal
 
-// Convert from one type of std::chrono::time_point to another, even if they
+// Converts from one type of std::chrono::time_point to another, even if they
 // are on different clocks. The conversion may have some error. Based on code
-// from https://stackoverflow.com/questions/35282308/convert-between-c11-clocks
+// from web page "Convert between c++11 clocks" available at:
+// https://stackoverflow.com/questions/35282308/convert-between-c11-clocks
+// (Retrieved February 8, 2020)
 template <typename DstTimePoint, typename SrcTimePoint,
           typename DstDuration = typename DstTimePoint::duration,
           typename SrcDuration = typename SrcTimePoint::duration,
