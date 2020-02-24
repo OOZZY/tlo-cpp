@@ -2,19 +2,18 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 project("tlo-cpp")
 enable_testing()
 
-# Threads required. See CMake documentation on FindThreads module.
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
+if (UNIX)
+  # Threads required. See CMake documentation on FindThreads module.
+  set(CMAKE_THREAD_PREFER_PTHREAD ON)
+  set(THREADS_PREFER_PTHREAD_FLAG ON)
+  find_package(Threads REQUIRED)
+endif()
 
 find_package(SQLite3 REQUIRED)
 
 set(private_compile_options "")
 set(public_compile_options "")
-set(public_link_libraries
-  Threads::Threads
-  SQLite::SQLite3
-)
+set(public_link_libraries SQLite::SQLite3)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -34,6 +33,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     -Wno-exit-time-destructors
     -Wno-global-constructors
   )
+endif()
+
+if (UNIX)
+  list(APPEND public_link_libraries Threads::Threads)
 endif()
 
 option(TLO_CPP_COLORED_DIAGNOSTICS
