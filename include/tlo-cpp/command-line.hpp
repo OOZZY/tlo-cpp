@@ -11,7 +11,7 @@
 namespace tlo {
 struct OptionDetails {
   std::vector<std::string> values;
-  int lastIndex;
+  int lastIndex = 0;
 };
 
 std::ostream &operator<<(std::ostream &ostream, const OptionDetails &details);

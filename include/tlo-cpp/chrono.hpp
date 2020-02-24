@@ -32,7 +32,8 @@ template <typename DstTimePoint, typename SrcTimePoint,
           typename SrcClock = typename SrcTimePoint::clock>
 DstTimePoint convertTimePoint(
     const SrcTimePoint timePoint,
-    const SrcDuration tolerance = std::chrono::nanoseconds{100},
+    const SrcDuration tolerance =
+        std::chrono::duration_cast<SrcDuration>(std::chrono::nanoseconds{100}),
     const int limit = 10) {
   assert(limit > 0);
 

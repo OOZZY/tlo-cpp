@@ -49,12 +49,12 @@ struct TestFixture2 : tlo::test::Test {
 };
 
 TLO_TEST_USING_FIXTURE(TestFixture2, TestCase1) {
-  TLO_ASSERT(intPtr);
+  TLO_ASSERT(intPtr != nullptr);
   TLO_EXPECT(*intPtr == ANSWER);
 }
 
 TLO_TEST_USING_FIXTURE(TestFixture2, TestCase2) {
-  TLO_ASSERT(intPtr);
+  TLO_ASSERT(intPtr != nullptr);
   TLO_EXPECT(*intPtr == ANSWER);
 }
 }  // namespace

@@ -3,6 +3,7 @@ project("tlo-cpp")
 enable_testing()
 
 set(private_compile_options "")
+set(private_compile_definitions "")
 set(public_compile_options "")
 set(public_include_directories ${PROJECT_SOURCE_DIR}/include)
 set(public_link_libraries "")
@@ -50,6 +51,27 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     -Wno-exit-time-destructors
     -Wno-global-constructors
   )
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  list(APPEND private_compile_options
+    /Wall
+    /WX
+    /wd4820
+    /wd4514
+    /wd4710
+    /wd4668
+    /wd5039
+    /wd5045
+    /wd4571
+    /wd4625
+    /wd4626
+    /wd5026
+    /wd5027
+    /wd4711
+  )
+
+  list(APPEND private_compile_definitions _CRT_SECURE_NO_WARNINGS)
 endif()
 
 option(TLO_CPP_COLORED_DIAGNOSTICS
@@ -142,6 +164,7 @@ target_compile_options(tlo-cpp
   PRIVATE ${private_compile_options}
   PUBLIC ${public_compile_options}
 )
+target_compile_definitions(tlo-cpp PRIVATE ${private_compile_definitions})
 target_include_directories(tlo-cpp PUBLIC ${public_include_directories})
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
 
@@ -155,6 +178,9 @@ target_compile_features(tlo-cpp-test-main PUBLIC cxx_std_17)
 target_compile_options(tlo-cpp-test-main
   PRIVATE ${private_compile_options}
   PUBLIC ${public_compile_options}
+)
+target_compile_definitions(tlo-cpp-test-main
+  PRIVATE ${private_compile_definitions}
 )
 target_include_directories(tlo-cpp-test-main
   PUBLIC ${PROJECT_SOURCE_DIR}/include
@@ -179,6 +205,7 @@ prepend(tlo_cpp_test_sources
 add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
 set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_options(tlo-cpp-test PRIVATE ${private_compile_options})
+target_compile_definitions(tlo-cpp-test PRIVATE ${private_compile_definitions})
 target_link_libraries(tlo-cpp-test PRIVATE tlo-cpp tlo-cpp-test-main)
 
 add_test(NAME tlo-cpp-test COMMAND tlo-cpp-test)
