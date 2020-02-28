@@ -51,35 +51,35 @@ int Sqlite3Statement::step() {
 
 const void *Sqlite3Statement::columnAsBlob(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_blob(statement, columnIndex);
 }
 
 double Sqlite3Statement::columnAsDouble(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_double(statement, columnIndex);
 }
 
 int Sqlite3Statement::columnAsInt(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_int(statement, columnIndex);
 }
 
 sqlite3_int64 Sqlite3Statement::columnAsInt64(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_int64(statement, columnIndex);
 }
 
 std::string_view Sqlite3Statement::columnAsUtf8Text(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return {reinterpret_cast<const char *>(
               sqlite3_column_text(statement, columnIndex)),
@@ -88,7 +88,7 @@ std::string_view Sqlite3Statement::columnAsUtf8Text(int columnIndex) {
 
 std::u16string_view Sqlite3Statement::columnAsUtf16Text(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return {reinterpret_cast<const char16_t *>(
               sqlite3_column_text16(statement, columnIndex)),
@@ -98,21 +98,21 @@ std::u16string_view Sqlite3Statement::columnAsUtf16Text(int columnIndex) {
 
 int Sqlite3Statement::numBytesInBlobOrUtf8Text(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_bytes(statement, columnIndex);
 }
 
 int Sqlite3Statement::numBytesInUtf16Text(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_bytes16(statement, columnIndex);
 }
 
 int Sqlite3Statement::columnType(int columnIndex) {
   assert(statement);
-  assert(columnIndex < numColumnsInCurrentRow());
+  assert(0 <= columnIndex && columnIndex < numColumnsInCurrentRow());
 
   return sqlite3_column_type(statement, columnIndex);
 }
@@ -140,7 +140,7 @@ void Sqlite3Statement::reset() {
 void Sqlite3Statement::bindBlob(int parameterIndex, const void *value,
                                 int numBytes, void (*destructor)(void *)) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc =
       sqlite3_bind_blob(statement, parameterIndex, value, numBytes, destructor);
@@ -152,7 +152,7 @@ void Sqlite3Statement::bindBlob64(int parameterIndex, const void *value,
                                   sqlite3_uint64 numBytes,
                                   void (*destructor)(void *)) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_blob64(statement, parameterIndex, value, numBytes,
                                destructor);
@@ -162,7 +162,7 @@ void Sqlite3Statement::bindBlob64(int parameterIndex, const void *value,
 
 void Sqlite3Statement::bindDouble(int parameterIndex, double value) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_double(statement, parameterIndex, value);
 
@@ -171,7 +171,7 @@ void Sqlite3Statement::bindDouble(int parameterIndex, double value) {
 
 void Sqlite3Statement::bindInt(int parameterIndex, int value) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_int(statement, parameterIndex, value);
 
@@ -180,7 +180,7 @@ void Sqlite3Statement::bindInt(int parameterIndex, int value) {
 
 void Sqlite3Statement::bindInt64(int parameterIndex, sqlite3_int64 value) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_int64(statement, parameterIndex, value);
 
@@ -189,7 +189,7 @@ void Sqlite3Statement::bindInt64(int parameterIndex, sqlite3_int64 value) {
 
 void Sqlite3Statement::bindNull(int parameterIndex) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_null(statement, parameterIndex);
 
@@ -199,7 +199,7 @@ void Sqlite3Statement::bindNull(int parameterIndex) {
 void Sqlite3Statement::bindUtf8Text(int parameterIndex, std::string_view value,
                                     void (*destructor)(void *)) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_text(statement, parameterIndex, value.data(),
                              static_cast<int>(value.size()), destructor);
@@ -212,7 +212,7 @@ void Sqlite3Statement::bindUtf16Text(int parameterIndex,
                                      std::u16string_view value,
                                      void (*destructor)(void *)) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_text16(
       statement, parameterIndex, value.data(),
@@ -226,7 +226,7 @@ void Sqlite3Statement::bindText64(int parameterIndex, unsigned char encoding,
                                   const char *value, sqlite3_uint64 numBytes,
                                   void (*destructor)(void *)) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_text64(statement, parameterIndex, value, numBytes,
                                destructor, encoding);
@@ -236,7 +236,7 @@ void Sqlite3Statement::bindText64(int parameterIndex, unsigned char encoding,
 
 void Sqlite3Statement::bindZeroBlob(int parameterIndex, int numBytes) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_zeroblob(statement, parameterIndex, numBytes);
 
@@ -247,7 +247,7 @@ void Sqlite3Statement::bindZeroBlob(int parameterIndex, int numBytes) {
 void Sqlite3Statement::bindZeroBlob64(int parameterIndex,
                                       sqlite3_uint64 numBytes) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   int rc = sqlite3_bind_zeroblob64(statement, parameterIndex, numBytes);
 
@@ -271,7 +271,7 @@ int Sqlite3Statement::numParameters() {
 
 std::string_view Sqlite3Statement::parameterName(int parameterIndex) {
   assert(statement);
-  assert(parameterIndex <= numParameters());
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
 
   return sqlite3_bind_parameter_name(statement, parameterIndex);
 }
