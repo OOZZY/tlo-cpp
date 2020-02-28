@@ -29,7 +29,7 @@ Clone into tlo-cpp directory.
 $ git clone --branch develop git@github.com:OOZZY/tlo-cpp.git
 ```
 
-Build.
+Build (out of source).
 
 ```
 $ mkdir build
