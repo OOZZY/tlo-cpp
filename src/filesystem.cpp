@@ -42,7 +42,8 @@ std::size_t HashPath::operator()(const fs::path &path) const {
   return fs::hash_value(path);
 }
 
-std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings) {
+std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings,
+                                     PathType pathType) {
   std::vector<fs::path> paths;
   std::unordered_set<fs::path, HashPath> pathsAdded;
 
@@ -54,11 +55,13 @@ std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings) {
                                "\" does not exist.");
     }
 
-    fs::path canonicalPath = fs::canonical(path);
+    if (pathType == PathType::CANONICAL) {
+      path = fs::canonical(path);
+    }
 
-    if (pathsAdded.find(canonicalPath) == pathsAdded.end()) {
-      paths.push_back(canonicalPath);
-      pathsAdded.insert(std::move(canonicalPath));
+    if (pathsAdded.find(path) == pathsAdded.end()) {
+      paths.push_back(path);
+      pathsAdded.insert(std::move(path));
     }
   }
 

@@ -18,10 +18,16 @@ struct HashPath {
   std::size_t operator()(const std::filesystem::path &path) const;
 };
 
+enum class PathType { INPUT, CANONICAL };
+
 // Also removes duplicate paths while preserving order of items. Throws
-// std::runtime_error if a string refers to a path that doesn't exist.
+// std::runtime_error if a string refers to a path that doesn't exist. If
+// pathType is PathType::INPUT, will not further modify paths after they have
+// been constructed. If pathType is PathType::CANONICAL, will convert each
+// constructed path to a canonical path using std::filesystem::canonical().
 std::vector<std::filesystem::path> stringsToPaths(
-    const std::vector<std::string> &strings);
+    const std::vector<std::string> &strings,
+    PathType pathType = PathType::INPUT);
 }  // namespace tlo
 
 #endif  // TLO_CPP_FILESYSTEM_HPP
