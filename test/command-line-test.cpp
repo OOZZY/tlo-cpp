@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <initializer_list>
+#include <iterator>
 #include <tlo-cpp/command-line.hpp>
 #include <tlo-cpp/test.hpp>
 
@@ -6,9 +8,8 @@ namespace {
 std::vector<char *> makeArgv(std::initializer_list<const char *> strings) {
   std::vector<char *> arguments;
 
-  for (const char *string : strings) {
-    arguments.push_back(const_cast<char *>(string));
-  }
+  std::transform(strings.begin(), strings.end(), std::back_inserter(arguments),
+                 [](const char *string) { return const_cast<char *>(string); });
 
   return arguments;
 }
