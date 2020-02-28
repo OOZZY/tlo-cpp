@@ -148,6 +148,18 @@ void Sqlite3Statement::bindBlob(int parameterIndex, const void *value,
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind blob to parameter: ");
 }
 
+void Sqlite3Statement::bindBlob(std::string_view parameterName,
+                                const void *value, int numBytes,
+                                void (*destructor)(void *)) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindBlob(parameterIndex, value, numBytes, destructor);
+}
+
 void Sqlite3Statement::bindBlob64(int parameterIndex, const void *value,
                                   sqlite3_uint64 numBytes,
                                   void (*destructor)(void *)) {
@@ -160,6 +172,18 @@ void Sqlite3Statement::bindBlob64(int parameterIndex, const void *value,
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind blob to parameter: ");
 }
 
+void Sqlite3Statement::bindBlob64(std::string_view parameterName,
+                                  const void *value, sqlite3_uint64 numBytes,
+                                  void (*destructor)(void *)) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindBlob64(parameterIndex, value, numBytes, destructor);
+}
+
 void Sqlite3Statement::bindDouble(int parameterIndex, double value) {
   assert(statement);
   assert(1 <= parameterIndex && parameterIndex <= numParameters());
@@ -167,6 +191,17 @@ void Sqlite3Statement::bindDouble(int parameterIndex, double value) {
   int rc = sqlite3_bind_double(statement, parameterIndex, value);
 
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind double to parameter: ");
+}
+
+void Sqlite3Statement::bindDouble(std::string_view parameterName,
+                                  double value) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindDouble(parameterIndex, value);
 }
 
 void Sqlite3Statement::bindInt(int parameterIndex, int value) {
@@ -178,6 +213,16 @@ void Sqlite3Statement::bindInt(int parameterIndex, int value) {
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind int to parameter: ");
 }
 
+void Sqlite3Statement::bindInt(std::string_view parameterName, int value) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindInt(parameterIndex, value);
+}
+
 void Sqlite3Statement::bindInt64(int parameterIndex, sqlite3_int64 value) {
   assert(statement);
   assert(1 <= parameterIndex && parameterIndex <= numParameters());
@@ -187,6 +232,17 @@ void Sqlite3Statement::bindInt64(int parameterIndex, sqlite3_int64 value) {
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind int64 to parameter: ");
 }
 
+void Sqlite3Statement::bindInt64(std::string_view parameterName,
+                                 sqlite3_int64 value) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindInt64(parameterIndex, value);
+}
+
 void Sqlite3Statement::bindNull(int parameterIndex) {
   assert(statement);
   assert(1 <= parameterIndex && parameterIndex <= numParameters());
@@ -194,6 +250,16 @@ void Sqlite3Statement::bindNull(int parameterIndex) {
   int rc = sqlite3_bind_null(statement, parameterIndex);
 
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind null to parameter: ");
+}
+
+void Sqlite3Statement::bindNull(std::string_view parameterName) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindNull(parameterIndex);
 }
 
 void Sqlite3Statement::bindUtf8Text(int parameterIndex, std::string_view value,
@@ -206,6 +272,18 @@ void Sqlite3Statement::bindUtf8Text(int parameterIndex, std::string_view value,
 
   throwIf(rc != SQLITE_OK, rc,
           "Error: Failed to bind UTF-8 text to parameter: ");
+}
+
+void Sqlite3Statement::bindUtf8Text(std::string_view parameterName,
+                                    std::string_view value,
+                                    void (*destructor)(void *)) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindUtf8Text(parameterIndex, value, destructor);
 }
 
 void Sqlite3Statement::bindUtf16Text(int parameterIndex,
@@ -222,6 +300,18 @@ void Sqlite3Statement::bindUtf16Text(int parameterIndex,
           "Error: Failed to bind UTF-16 text to parameter: ");
 }
 
+void Sqlite3Statement::bindUtf16Text(std::string_view parameterName,
+                                     std::u16string_view value,
+                                     void (*destructor)(void *)) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindUtf16Text(parameterIndex, value, destructor);
+}
+
 void Sqlite3Statement::bindText64(int parameterIndex, unsigned char encoding,
                                   const char *value, sqlite3_uint64 numBytes,
                                   void (*destructor)(void *)) {
@@ -234,6 +324,19 @@ void Sqlite3Statement::bindText64(int parameterIndex, unsigned char encoding,
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to bind text to parameter: ");
 }
 
+void Sqlite3Statement::bindText64(std::string_view parameterName,
+                                  unsigned char encoding, const char *value,
+                                  sqlite3_uint64 numBytes,
+                                  void (*destructor)(void *)) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindText64(parameterIndex, encoding, value, numBytes, destructor);
+}
+
 void Sqlite3Statement::bindZeroBlob(int parameterIndex, int numBytes) {
   assert(statement);
   assert(1 <= parameterIndex && parameterIndex <= numParameters());
@@ -242,6 +345,17 @@ void Sqlite3Statement::bindZeroBlob(int parameterIndex, int numBytes) {
 
   throwIf(rc != SQLITE_OK, rc,
           "Error: Failed to bind zero blob to parameter: ");
+}
+
+void Sqlite3Statement::bindZeroBlob(std::string_view parameterName,
+                                    int numBytes) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindZeroBlob(parameterIndex, numBytes);
 }
 
 void Sqlite3Statement::bindZeroBlob64(int parameterIndex,
@@ -253,6 +367,17 @@ void Sqlite3Statement::bindZeroBlob64(int parameterIndex,
 
   throwIf(rc != SQLITE_OK, rc,
           "Error: Failed to bind zero blob to parameter: ");
+}
+
+void Sqlite3Statement::bindZeroBlob64(std::string_view parameterName,
+                                      sqlite3_uint64 numBytes) {
+  assert(statement);
+
+  int parameterIndex = this->parameterIndex(parameterName);
+
+  assert(1 <= parameterIndex && parameterIndex <= numParameters());
+
+  bindZeroBlob64(parameterIndex, numBytes);
 }
 
 void Sqlite3Statement::clearBindings() {

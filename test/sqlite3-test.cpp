@@ -42,8 +42,8 @@ TLO_TEST(Sqlite3OpenConnectionAndPrepareStatements) {
   TLO_ASSERT(update.isPrepared());
   TLO_ASSERT(remove.isPrepared());
 
-  insert.bindInt(insert.parameterIndex(":value"), 0);
-  insert.bindUtf8Text(insert.parameterIndex(":desc"), "Zero means success.");
+  insert.bindInt(":value", 0);
+  insert.bindUtf8Text(":desc", "Zero means success.");
   rc = insert.step();
   TLO_ASSERT_EQ(rc, SQLITE_DONE);
   insert.reset();
@@ -67,9 +67,8 @@ TLO_TEST(Sqlite3OpenConnectionAndPrepareStatements) {
 
   TLO_ASSERT_EQ(numRows, 1);
 
-  update.bindInt(update.parameterIndex(":value"), 0);
-  update.bindUtf8Text(update.parameterIndex(":desc"),
-                      "Zero means no errors occurred.");
+  update.bindInt(":value", 0);
+  update.bindUtf8Text(":desc", "Zero means no errors occurred.");
   rc = update.step();
   TLO_ASSERT_EQ(rc, SQLITE_DONE);
 
@@ -87,7 +86,7 @@ TLO_TEST(Sqlite3OpenConnectionAndPrepareStatements) {
 
   TLO_ASSERT_EQ(numRows, 1);
 
-  remove.bindInt(remove.parameterIndex(":value"), 0);
+  remove.bindInt(":value", 0);
   rc = remove.step();
   TLO_ASSERT_EQ(rc, SQLITE_DONE);
 

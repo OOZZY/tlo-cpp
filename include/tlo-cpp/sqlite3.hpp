@@ -53,6 +53,8 @@ class Sqlite3Statement {
   // of the data immediately.
   void bindBlob(int parameterIndex, const void *value, int numBytes,
                 void (*destructor)(void *) = SQLITE_STATIC);
+  void bindBlob(std::string_view parameterName, const void *value, int numBytes,
+                void (*destructor)(void *) = SQLITE_STATIC);
 
   // If destructor is SQLITE_STATIC, SQLite will not call destructor. If
   // destructor is SQLITE_TRANSIENT, then SQLite will make its own private copy
@@ -60,22 +62,33 @@ class Sqlite3Statement {
   void bindBlob64(int parameterIndex, const void *value,
                   sqlite3_uint64 numBytes,
                   void (*destructor)(void *) = SQLITE_STATIC);
+  void bindBlob64(std::string_view parameterName, const void *value,
+                  sqlite3_uint64 numBytes,
+                  void (*destructor)(void *) = SQLITE_STATIC);
 
   void bindDouble(int parameterIndex, double value);
+  void bindDouble(std::string_view parameterName, double value);
   void bindInt(int parameterIndex, int value);
+  void bindInt(std::string_view parameterName, int value);
   void bindInt64(int parameterIndex, sqlite3_int64 value);
+  void bindInt64(std::string_view parameterName, sqlite3_int64 value);
   void bindNull(int parameterIndex);
+  void bindNull(std::string_view parameterName);
 
   // If destructor is SQLITE_STATIC, SQLite will not call destructor. If
   // destructor is SQLITE_TRANSIENT, then SQLite will make its own private copy
   // of the data immediately.
   void bindUtf8Text(int parameterIndex, std::string_view value,
                     void (*destructor)(void *) = SQLITE_STATIC);
+  void bindUtf8Text(std::string_view parameterName, std::string_view value,
+                    void (*destructor)(void *) = SQLITE_STATIC);
 
   // If destructor is SQLITE_STATIC, SQLite will not call destructor. If
   // destructor is SQLITE_TRANSIENT, then SQLite will make its own private copy
   // of the data immediately.
   void bindUtf16Text(int parameterIndex, std::u16string_view value,
+                     void (*destructor)(void *) = SQLITE_STATIC);
+  void bindUtf16Text(std::string_view parameterName, std::u16string_view value,
                      void (*destructor)(void *) = SQLITE_STATIC);
 
   // If destructor is SQLITE_STATIC, SQLite will not call destructor. If
@@ -84,9 +97,14 @@ class Sqlite3Statement {
   void bindText64(int parameterIndex, unsigned char encoding, const char *value,
                   sqlite3_uint64 numBytes,
                   void (*destructor)(void *) = SQLITE_STATIC);
+  void bindText64(std::string_view parameterName, unsigned char encoding,
+                  const char *value, sqlite3_uint64 numBytes,
+                  void (*destructor)(void *) = SQLITE_STATIC);
 
   void bindZeroBlob(int parameterIndex, int numBytes);
+  void bindZeroBlob(std::string_view parameterName, int numBytes);
   void bindZeroBlob64(int parameterIndex, sqlite3_uint64 numBytes);
+  void bindZeroBlob64(std::string_view parameterName, sqlite3_uint64 numBytes);
 
   void clearBindings();
   int numParameters();
