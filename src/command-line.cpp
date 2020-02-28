@@ -24,9 +24,7 @@ bool operator==(const OptionDetails &details1, const OptionDetails &details2) {
 CommandLine::CommandLine(
     int argc, char **argv,
     const std::map<std::string, OptionAttributes> &validOptions)
-    : validOptions_(validOptions) {
-  program_ = fs::path(argv[0]).stem().string();
-
+    : program_(fs::path(argv[0]).stem().string()), validOptions_(validOptions) {
   for (int i = 1; i < argc; ++i) {
     std::string argument = argv[i];
 
