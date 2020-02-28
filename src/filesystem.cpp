@@ -3,7 +3,6 @@
 #include <fstream>
 #include <stdexcept>
 #include <unordered_set>
-#include <utility>
 
 #include "tlo-cpp/chrono.hpp"
 
