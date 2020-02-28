@@ -55,13 +55,16 @@ std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings,
                                "\" does not exist.");
     }
 
-    if (pathType == PathType::CANONICAL) {
-      path = fs::canonical(path);
-    }
+    fs::path canonicalPath = fs::canonical(path);
 
-    if (pathsAdded.find(path) == pathsAdded.end()) {
-      paths.push_back(path);
-      pathsAdded.insert(std::move(path));
+    if (pathsAdded.find(canonicalPath) == pathsAdded.end()) {
+      if (pathType == PathType::CANONICAL) {
+        paths.push_back(canonicalPath);
+      } else {
+        paths.push_back(std::move(path));
+      }
+
+      pathsAdded.insert(std::move(canonicalPath));
     }
   }
 
