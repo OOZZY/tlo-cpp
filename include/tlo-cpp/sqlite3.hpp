@@ -106,7 +106,7 @@ class Sqlite3Connection {
   // Will just copy the underlying sqlite3 pointer.
   Sqlite3Connection(const Sqlite3Connection &connection) = default;
 
-  Sqlite3Connection(const std::filesystem::path &dbFilePath);
+  explicit Sqlite3Connection(const std::filesystem::path &dbFilePath);
 
   // Make sure all prepared statements associated with this database connection
   // are finalized (destructed) before this destructor is called.
