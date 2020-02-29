@@ -69,4 +69,45 @@ std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings,
 
   return paths;
 }
+
+std::vector<fs::path> buildFileList(const std::vector<fs::path> &paths) {
+  std::vector<fs::path> fileList;
+  std::unordered_set<fs::path, HashPath> pathsAdded;
+
+  for (const auto &path : paths) {
+    if (fs::is_regular_file(path)) {
+      if (pathsAdded.find(path) == pathsAdded.end()) {
+        fileList.push_back(path);
+        pathsAdded.insert(path);
+      }
+    } else if (fs::is_directory(path)) {
+      // When compiled with MSVC++ on Windows, accessing iterator->path() might
+      // throw an exception if the path contains certain Unicode characters.
+      // This exception can't be caught when using a ranged-based for loop, so
+      // manual iteration is done instead.
+      for (fs::recursive_directory_iterator iterator(path);
+           iterator != fs::end(iterator); iterator++) {
+        bool isFile;
+
+        try {
+          isFile = fs::is_regular_file(iterator->path());
+        } catch (...) {
+          continue;
+        }
+
+        if (isFile) {
+          if (pathsAdded.find(iterator->path()) == pathsAdded.end()) {
+            fileList.push_back(iterator->path());
+            pathsAdded.insert(iterator->path());
+          }
+        }
+      }
+    } else {
+      throw std::runtime_error("Error: \"" + path.string() +
+                               "\" is not a file or directory.");
+    }
+  }
+
+  return fileList;
+}
 }  // namespace tlo

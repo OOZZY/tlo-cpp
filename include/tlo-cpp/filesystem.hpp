@@ -22,7 +22,7 @@ struct HashPath {
 
 enum class PathType { INPUT, CANONICAL };
 
-// Also removes duplicate paths while preserving order of items. Throws
+// Will not include duplicate paths and will preserve order of paths. Throws
 // std::runtime_error if a string refers to a path that doesn't exist. If
 // pathType is PathType::INPUT, will not further modify paths after they have
 // been constructed. If pathType is PathType::CANONICAL, will convert each
@@ -57,6 +57,14 @@ std::pair<bool, Iterator> allFilesOrDirectories(const PathContainer &paths) {
 
   return std::pair(iterator == paths.cend(), iterator);
 }
+
+// Assumes paths contains paths to files or directories. Throws
+// std::runtime_error if a path is not a file or directory. If a path is a file,
+// adds it the file list. If a path is a directory, adds to the file list all
+// files in the directory and all its subdirectories. Returns the resulting file
+// list. Also, will not add duplicate paths and will preserve order of paths.
+std::vector<std::filesystem::path> buildFileList(
+    const std::vector<std::filesystem::path> &paths);
 }  // namespace tlo
 
 #endif  // TLO_CPP_FILESYSTEM_HPP
