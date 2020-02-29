@@ -416,7 +416,7 @@ Sqlite3Connection::~Sqlite3Connection() { sqlite3_close(connection); }
 void Sqlite3Connection::open(const std::filesystem::path &dbFilePath) {
   assert(!connection);
 
-  int rc = sqlite3_open(dbFilePath.generic_string().c_str(), &connection);
+  int rc = sqlite3_open(dbFilePath.generic_u8string().c_str(), &connection);
 
   throwIf(rc != SQLITE_OK, rc, "Error: Failed to open database connection: ");
 }

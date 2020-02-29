@@ -13,7 +13,7 @@ std::uintmax_t getFileSize(const fs::path &filePath) {
   std::ifstream ifstream(filePath, std::ifstream::in | std::ifstream::binary);
 
   if (!ifstream.is_open()) {
-    throw std::runtime_error("Error: Failed to open \"" + filePath.string() +
+    throw std::runtime_error("Error: Failed to open \"" + filePath.u8string() +
                              "\".");
   }
 
@@ -23,7 +23,7 @@ std::uintmax_t getFileSize(const fs::path &filePath) {
 
   if (size < 0) {
     throw std::runtime_error("Error: Failed to get size of \"" +
-                             filePath.string() + "\".");
+                             filePath.u8string() + "\".");
   }
 
   return static_cast<std::uintmax_t>(size);
@@ -90,7 +90,7 @@ std::vector<fs::path> buildFileList(const std::vector<fs::path> &paths) {
         }
       }
     } else {
-      throw std::runtime_error("Error: \"" + path.string() +
+      throw std::runtime_error("Error: \"" + path.u8string() +
                                "\" is not a file or directory.");
     }
   }
