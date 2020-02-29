@@ -81,24 +81,11 @@ std::vector<fs::path> buildFileList(const std::vector<fs::path> &paths) {
         pathsAdded.insert(path);
       }
     } else if (fs::is_directory(path)) {
-      // When compiled with MSVC++ on Windows, accessing iterator->path() might
-      // throw an exception if the path contains certain Unicode characters.
-      // This exception can't be caught when using a ranged-based for loop, so
-      // manual iteration is done instead.
-      for (fs::recursive_directory_iterator iterator(path);
-           iterator != fs::end(iterator); iterator++) {
-        bool isFile;
-
-        try {
-          isFile = fs::is_regular_file(iterator->path());
-        } catch (...) {
-          continue;
-        }
-
-        if (isFile) {
-          if (pathsAdded.find(iterator->path()) == pathsAdded.end()) {
-            fileList.push_back(iterator->path());
-            pathsAdded.insert(iterator->path());
+      for (const auto &entry : fs::recursive_directory_iterator(path)) {
+        if (fs::is_regular_file(entry.path())) {
+          if (pathsAdded.find(entry.path()) == pathsAdded.end()) {
+            fileList.push_back(entry.path());
+            pathsAdded.insert(entry.path());
           }
         }
       }
