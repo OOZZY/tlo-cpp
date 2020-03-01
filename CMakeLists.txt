@@ -17,12 +17,18 @@ if (UNIX)
   list(APPEND public_link_libraries Threads::Threads)
 endif()
 
-set(TLO_CPP_SQLITE3_INCLUDE_DIRS ""
-  CACHE STRING "Include directories containing SQLite 3 headers."
+macro(string_option name docstring default_value)
+  if (NOT DEFINED ${name} OR DEFINED CACHE{${name}})
+    set(${name} "${default_value}" CACHE STRING "${docstring}")
+  endif()
+endmacro(string_option)
+
+string_option(TLO_CPP_SQLITE3_INCLUDE_DIRS
+  "Include directories containing SQLite 3 headers." ""
 )
 
-set(TLO_CPP_SQLITE3_LIBRARIES ""
-  CACHE STRING "Libraries to link against to use SQLite 3."
+string_option(TLO_CPP_SQLITE3_LIBRARIES
+  "Libraries to link against to use SQLite 3." ""
 )
 
 if ("${TLO_CPP_SQLITE3_INCLUDE_DIRS}" STREQUAL "" OR
