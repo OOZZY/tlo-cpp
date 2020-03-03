@@ -213,3 +213,6 @@ target_compile_definitions(tlo-cpp-test PRIVATE ${private_compile_definitions})
 target_link_libraries(tlo-cpp-test PRIVATE tlo-cpp tlo-cpp-test-main)
 
 add_test(NAME tlo-cpp-test COMMAND tlo-cpp-test)
+
+install(DIRECTORY include/tlo-cpp DESTINATION include)
+install(TARGETS tlo-cpp tlo-cpp-test-main DESTINATION lib)
