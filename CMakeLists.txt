@@ -5,7 +5,7 @@ enable_testing()
 set(private_compile_options "")
 set(private_compile_definitions "")
 set(public_compile_options "")
-set(public_include_directories ${PROJECT_SOURCE_DIR}/include)
+set(public_include_directories include)
 set(public_link_libraries "")
 
 if (UNIX)
@@ -145,14 +145,10 @@ set(tlo_cpp_headers
   stop.hpp
   string.hpp
 )
-prepend(tlo_cpp_headers
-  ${PROJECT_SOURCE_DIR}/include/tlo-cpp/ ${tlo_cpp_headers}
-)
+prepend(tlo_cpp_headers include/tlo-cpp/ ${tlo_cpp_headers})
 
 set(tlo_cpp_private_headers container.hpp)
-prepend(tlo_cpp_private_headers
-  ${PROJECT_SOURCE_DIR}/src/ ${tlo_cpp_private_headers}
-)
+prepend(tlo_cpp_private_headers src/ ${tlo_cpp_private_headers})
 
 set(tlo_cpp_sources
   chrono.cpp
@@ -167,7 +163,7 @@ set(tlo_cpp_sources
   stop.cpp
   string.cpp
 )
-prepend(tlo_cpp_sources ${PROJECT_SOURCE_DIR}/src/ ${tlo_cpp_sources})
+prepend(tlo_cpp_sources src/ ${tlo_cpp_sources})
 
 add_library(tlo-cpp STATIC
   ${tlo_cpp_headers}
@@ -185,9 +181,9 @@ target_include_directories(tlo-cpp PUBLIC ${public_include_directories})
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
 
 add_library(tlo-cpp-test-main STATIC
-  ${PROJECT_SOURCE_DIR}/include/tlo-cpp/test.hpp
-  ${PROJECT_SOURCE_DIR}/src/test.cpp
-  ${PROJECT_SOURCE_DIR}/src/test-main.cpp
+  include/tlo-cpp/test.hpp
+  src/test.cpp
+  src/test-main.cpp
 )
 set_target_properties(tlo-cpp-test-main PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp-test-main PUBLIC cxx_std_17)
@@ -199,7 +195,7 @@ target_compile_definitions(tlo-cpp-test-main
   PRIVATE ${private_compile_definitions}
 )
 target_include_directories(tlo-cpp-test-main
-  PUBLIC ${PROJECT_SOURCE_DIR}/include
+  PUBLIC ${public_include_directories}
 )
 
 set(tlo_cpp_test_sources
@@ -214,9 +210,7 @@ set(tlo_cpp_test_sources
   string-test.cpp
   test-test.cpp
 )
-prepend(tlo_cpp_test_sources
-  ${PROJECT_SOURCE_DIR}/test/ ${tlo_cpp_test_sources}
-)
+prepend(tlo_cpp_test_sources test/ ${tlo_cpp_test_sources})
 
 add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
 set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
