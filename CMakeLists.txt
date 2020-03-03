@@ -4,7 +4,6 @@ enable_testing()
 
 set(private_compile_options "")
 set(private_compile_definitions "")
-set(public_compile_options "")
 set(public_include_directories include)
 set(public_link_libraries "")
 
@@ -104,8 +103,11 @@ endif()
 option(TLO_CPP_USE_LIBCPP "Use libc++ (Clang only)." OFF)
 if (TLO_CPP_USE_LIBCPP)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    list(APPEND public_compile_options -stdlib=libc++)
-    list(APPEND public_link_libraries c++)
+    add_library(libcpp INTERFACE)
+    target_compile_options(libcpp INTERFACE -stdlib=libc++)
+    target_link_libraries(libcpp INTERFACE c++)
+
+    list(APPEND public_link_libraries libcpp)
   endif()
 endif()
 
@@ -119,7 +121,7 @@ if (TLO_CPP_LINK_FS)
   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     if (TLO_CPP_USE_LIBCPP)
       # Prior to LLVM 9, using std::filesystem required linker option -lc++fs.
-      list(APPEND public_link_libraries c++fs)
+      target_link_libraries(libcpp INTERFACE c++fs)
     else()
       list(APPEND public_link_libraries stdc++fs)
     endif()
@@ -172,10 +174,7 @@ add_library(tlo-cpp STATIC
 )
 set_target_properties(tlo-cpp PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp PUBLIC cxx_std_17)
-target_compile_options(tlo-cpp
-  PRIVATE ${private_compile_options}
-  PUBLIC ${public_compile_options}
-)
+target_compile_options(tlo-cpp PRIVATE ${private_compile_options})
 target_compile_definitions(tlo-cpp PRIVATE ${private_compile_definitions})
 target_include_directories(tlo-cpp PUBLIC ${public_include_directories})
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
@@ -187,10 +186,7 @@ add_library(tlo-cpp-test-main STATIC
 )
 set_target_properties(tlo-cpp-test-main PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp-test-main PUBLIC cxx_std_17)
-target_compile_options(tlo-cpp-test-main
-  PRIVATE ${private_compile_options}
-  PUBLIC ${public_compile_options}
-)
+target_compile_options(tlo-cpp-test-main PRIVATE ${private_compile_options})
 target_compile_definitions(tlo-cpp-test-main
   PRIVATE ${private_compile_definitions}
 )
