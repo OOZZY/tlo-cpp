@@ -6,7 +6,6 @@ set(private_compile_options "")
 set(private_compile_definitions "")
 set(public_compile_options "")
 set(public_include_directories ${PROJECT_SOURCE_DIR}/include)
-set(public_system_include_directories "")
 set(public_link_libraries "")
 
 if (UNIX)
@@ -36,13 +35,18 @@ if ("${TLO_CPP_SQLITE3_INCLUDE_DIRS}" STREQUAL "" OR
   find_package(SQLite3 REQUIRED)
   list(APPEND public_link_libraries SQLite::SQLite3)
 else()
-  list(APPEND public_system_include_directories ${TLO_CPP_SQLITE3_INCLUDE_DIRS})
-  list(APPEND public_link_libraries ${TLO_CPP_SQLITE3_LIBRARIES})
+  add_library(sqlite INTERFACE)
+  target_include_directories(sqlite SYSTEM
+    INTERFACE ${TLO_CPP_SQLITE3_INCLUDE_DIRS}
+  )
+  target_link_libraries(sqlite INTERFACE ${TLO_CPP_SQLITE3_LIBRARIES})
 
   if (UNIX)
     # On Linux, programs using sqlite3 need to be linked with -pthread and -ldl.
-    list(APPEND public_link_libraries ${CMAKE_DL_LIBS})
+    target_link_libraries(sqlite INTERFACE ${CMAKE_DL_LIBS})
   endif()
+
+  list(APPEND public_link_libraries sqlite)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
@@ -178,9 +182,6 @@ target_compile_options(tlo-cpp
 )
 target_compile_definitions(tlo-cpp PRIVATE ${private_compile_definitions})
 target_include_directories(tlo-cpp PUBLIC ${public_include_directories})
-target_include_directories(tlo-cpp SYSTEM
-  PUBLIC ${public_system_include_directories}
-)
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
 
 add_library(tlo-cpp-test-main STATIC
