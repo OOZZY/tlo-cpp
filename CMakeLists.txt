@@ -4,7 +4,6 @@ enable_testing()
 
 set(private_compile_options "")
 set(private_compile_definitions "")
-set(public_include_directories include)
 set(public_link_libraries "")
 
 if (UNIX)
@@ -176,7 +175,7 @@ set_target_properties(tlo-cpp PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(tlo-cpp PUBLIC cxx_std_17)
 target_compile_options(tlo-cpp PRIVATE ${private_compile_options})
 target_compile_definitions(tlo-cpp PRIVATE ${private_compile_definitions})
-target_include_directories(tlo-cpp PUBLIC ${public_include_directories})
+target_include_directories(tlo-cpp PUBLIC include)
 target_link_libraries(tlo-cpp PUBLIC ${public_link_libraries})
 
 add_library(tlo-cpp-test-main STATIC
@@ -190,9 +189,7 @@ target_compile_options(tlo-cpp-test-main PRIVATE ${private_compile_options})
 target_compile_definitions(tlo-cpp-test-main
   PRIVATE ${private_compile_definitions}
 )
-target_include_directories(tlo-cpp-test-main
-  PUBLIC ${public_include_directories}
-)
+target_include_directories(tlo-cpp-test-main PUBLIC include)
 target_link_libraries(tlo-cpp-test-main PUBLIC $<TARGET_NAME_IF_EXISTS:libcpp>)
 
 set(tlo_cpp_test_sources
