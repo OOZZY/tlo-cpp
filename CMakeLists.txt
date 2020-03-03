@@ -193,6 +193,7 @@ target_compile_definitions(tlo-cpp-test-main
 target_include_directories(tlo-cpp-test-main
   PUBLIC ${public_include_directories}
 )
+target_link_libraries(tlo-cpp-test-main PUBLIC $<TARGET_NAME_IF_EXISTS:libcpp>)
 
 set(tlo_cpp_test_sources
   chrono-test.cpp
