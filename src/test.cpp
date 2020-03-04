@@ -16,10 +16,9 @@ int numExpectsFailed = 0;
 int numAssertsFailed = 0;
 int numObjectsCaught = 0;
 
-namespace {
-bool test(bool isExpect, const char *suffix, bool condition,
-          const char *conditionString, const char *file, int line,
-          const char *testName) {
+void updateCountsAndStartOutput(bool isExpect, const char *suffix,
+                                bool condition, const char *file, int line,
+                                const char *testName) {
   if (isExpect) {
     ++numExpects;
   } else {
@@ -39,7 +38,18 @@ bool test(bool isExpect, const char *suffix, bool condition,
       std::cout << "TLO_ASSERT";
     }
 
-    std::cout << suffix << " failed: " << conditionString << std::endl;
+    std::cout << suffix << " failed:";
+  }
+}
+
+namespace {
+bool test(bool isExpect, const char *suffix, bool condition,
+          const char *conditionString, const char *file, int line,
+          const char *testName) {
+  updateCountsAndStartOutput(isExpect, suffix, condition, file, line, testName);
+
+  if (!condition) {
+    std::cout << ' ' << conditionString << std::endl;
   }
 
   return condition;

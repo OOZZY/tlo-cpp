@@ -51,6 +51,10 @@ extern int numExpectsFailed;
 extern int numAssertsFailed;
 extern int numObjectsCaught;
 
+void updateCountsAndStartOutput(bool isExpect, const char *suffix,
+                                bool condition, const char *file, int line,
+                                const char *testName);
+
 // Returns condition.
 bool expect(bool isExpect, bool condition, const char *conditionString,
             const char *file, int line, const char *testName);
@@ -90,26 +94,10 @@ template <class Left, class Right>
 bool test(bool isExpect, const char *suffix, bool condition, const Left &left,
           const char *leftString, const Right &right, const char *rightString,
           const char *file, int line, const char *testName) {
-  if (isExpect) {
-    ++numExpects;
-  } else {
-    ++numAsserts;
-  }
+  updateCountsAndStartOutput(isExpect, suffix, condition, file, line, testName);
 
   if (!condition) {
-    std::cout << file << ":" << line << ": " << testName << ": ";
-
-    if (isExpect) {
-      ++numExpectsFailed;
-
-      std::cout << "TLO_EXPECT_";
-    } else {
-      ++numAssertsFailed;
-
-      std::cout << "TLO_ASSERT_";
-    }
-
-    std::cout << suffix << " failed:" << std::endl;
+    std::cout << std::endl;
     std::cout << "Left Expression : " << leftString << std::endl;
     std::cout << "Left Value      : " << left << std::endl;
     std::cout << "Right Expression: " << rightString << std::endl;
@@ -124,7 +112,7 @@ template <class Left, class Right>
 bool expectEqual(bool isExpect, const Left &left, const char *leftString,
                  const Right &right, const char *rightString, const char *file,
                  int line, const char *testName) {
-  return test(isExpect, "EQ", left == right, left, leftString, right,
+  return test(isExpect, "_EQ", left == right, left, leftString, right,
               rightString, file, line, testName);
 }
 
@@ -133,7 +121,7 @@ template <class Left, class Right>
 bool expectNotEqual(bool isExpect, const Left &left, const char *leftString,
                     const Right &right, const char *rightString,
                     const char *file, int line, const char *testName) {
-  return test(isExpect, "NE", left != right, left, leftString, right,
+  return test(isExpect, "_NE", left != right, left, leftString, right,
               rightString, file, line, testName);
 }
 
@@ -142,7 +130,7 @@ template <class Left, class Right>
 bool expectLessThan(bool isExpect, const Left &left, const char *leftString,
                     const Right &right, const char *rightString,
                     const char *file, int line, const char *testName) {
-  return test(isExpect, "LT", left < right, left, leftString, right,
+  return test(isExpect, "_LT", left < right, left, leftString, right,
               rightString, file, line, testName);
 }
 
@@ -152,7 +140,7 @@ bool expectLessThanOrEqual(bool isExpect, const Left &left,
                            const char *leftString, const Right &right,
                            const char *rightString, const char *file, int line,
                            const char *testName) {
-  return test(isExpect, "LE", left <= right, left, leftString, right,
+  return test(isExpect, "_LE", left <= right, left, leftString, right,
               rightString, file, line, testName);
 }
 
@@ -161,7 +149,7 @@ template <class Left, class Right>
 bool expectGreaterThan(bool isExpect, const Left &left, const char *leftString,
                        const Right &right, const char *rightString,
                        const char *file, int line, const char *testName) {
-  return test(isExpect, "GT", left > right, left, leftString, right,
+  return test(isExpect, "_GT", left > right, left, leftString, right,
               rightString, file, line, testName);
 }
 
@@ -171,7 +159,7 @@ bool expectGreaterThanOrEqual(bool isExpect, const Left &left,
                               const char *leftString, const Right &right,
                               const char *rightString, const char *file,
                               int line, const char *testName) {
-  return test(isExpect, "GE", left >= right, left, leftString, right,
+  return test(isExpect, "_GE", left >= right, left, leftString, right,
               rightString, file, line, testName);
 }
 }  // namespace internal
