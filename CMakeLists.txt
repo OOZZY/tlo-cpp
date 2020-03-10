@@ -191,8 +191,8 @@ target_compile_definitions(tlo-cpp-test-main
 target_include_directories(tlo-cpp-test-main PUBLIC include)
 target_link_libraries(tlo-cpp-test-main PUBLIC $<TARGET_NAME_IF_EXISTS:libcpp>)
 
-option(TLO_CPP_ENABLE_TEST "Enable tests." ON)
-if (TLO_CPP_ENABLE_TEST)
+option(TLO_CPP_ENABLE_TESTS "Enable tests." ON)
+if (TLO_CPP_ENABLE_TESTS)
   enable_testing()
 
   set(tlo_cpp_test_sources

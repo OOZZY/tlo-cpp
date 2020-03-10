@@ -70,3 +70,6 @@ $ ./tlo-cpp-test
       and will link to the libraries specified by TLO\_CPP\_SQLITE3\_LIBRARIES
     * Otherwise, `find_package(SQLite3 REQUIRED)` will be used instead
     * Empty strings by default
+* TLO\_CPP\_ENABLE\_TESTS
+    * Enable tests
+    * On by default
