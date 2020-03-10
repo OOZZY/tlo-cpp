@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 project("tlo-cpp")
-enable_testing()
 
 set(private_compile_options "")
 set(private_compile_definitions "")
@@ -192,27 +191,34 @@ target_compile_definitions(tlo-cpp-test-main
 target_include_directories(tlo-cpp-test-main PUBLIC include)
 target_link_libraries(tlo-cpp-test-main PUBLIC $<TARGET_NAME_IF_EXISTS:libcpp>)
 
-set(tlo_cpp_test_sources
-  chrono-test.cpp
-  command-line-test.cpp
-  damerau-levenshtein-test.cpp
-  hash-test.cpp
-  lcs-test.cpp
-  levenshtein-test.cpp
-  sqlite3-test.cpp
-  stop-test.cpp
-  string-test.cpp
-  test-test.cpp
-)
-prepend(tlo_cpp_test_sources test/ ${tlo_cpp_test_sources})
+option(TLO_CPP_ENABLE_TEST "Enable tests." ON)
+if (TLO_CPP_ENABLE_TEST)
+  enable_testing()
 
-add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
-set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_options(tlo-cpp-test PRIVATE ${private_compile_options})
-target_compile_definitions(tlo-cpp-test PRIVATE ${private_compile_definitions})
-target_link_libraries(tlo-cpp-test PRIVATE tlo-cpp tlo-cpp-test-main)
+  set(tlo_cpp_test_sources
+    chrono-test.cpp
+    command-line-test.cpp
+    damerau-levenshtein-test.cpp
+    hash-test.cpp
+    lcs-test.cpp
+    levenshtein-test.cpp
+    sqlite3-test.cpp
+    stop-test.cpp
+    string-test.cpp
+    test-test.cpp
+  )
+  prepend(tlo_cpp_test_sources test/ ${tlo_cpp_test_sources})
 
-add_test(NAME tlo-cpp-test COMMAND tlo-cpp-test)
+  add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
+  set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
+  target_compile_options(tlo-cpp-test PRIVATE ${private_compile_options})
+  target_compile_definitions(tlo-cpp-test
+    PRIVATE ${private_compile_definitions}
+  )
+  target_link_libraries(tlo-cpp-test PRIVATE tlo-cpp tlo-cpp-test-main)
+
+  add_test(NAME tlo-cpp-test COMMAND tlo-cpp-test)
+endif()
 
 install(DIRECTORY include/tlo-cpp DESTINATION include)
 install(TARGETS tlo-cpp tlo-cpp-test-main DESTINATION lib)
