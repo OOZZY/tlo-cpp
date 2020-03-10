@@ -76,6 +76,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     /wd4571
     /wd4625
     /wd4626
+    /wd4710
+    /wd4711
     /wd4820
     /wd5026
     /wd5027
