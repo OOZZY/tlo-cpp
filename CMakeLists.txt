@@ -101,14 +101,11 @@ if (TLO_CPP_COLORED_DIAGNOSTICS)
 endif()
 
 option(TLO_CPP_USE_LIBCPP "Use libc++ (Clang only)." OFF)
-if (TLO_CPP_USE_LIBCPP)
-  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_library(libcpp INTERFACE)
-    target_compile_options(libcpp INTERFACE -stdlib=libc++)
-    target_link_libraries(libcpp INTERFACE c++)
-
-    list(APPEND public_link_libraries libcpp)
-  endif()
+if (TLO_CPP_USE_LIBCPP AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  add_library(libcpp INTERFACE)
+  target_compile_options(libcpp INTERFACE -stdlib=libc++)
+  target_link_libraries(libcpp INTERFACE c++)
+  list(APPEND public_link_libraries libcpp)
 endif()
 
 option(TLO_CPP_LINK_FS
