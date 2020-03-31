@@ -170,7 +170,7 @@ add_library(tlo-cpp STATIC
   ${tlo_cpp_sources}
 )
 set_target_properties(tlo-cpp PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_features(tlo-cpp PUBLIC cxx_std_17)
+target_compile_features(tlo-cpp PRIVATE cxx_std_17)
 target_compile_options(tlo-cpp PRIVATE ${private_compile_options})
 target_compile_definitions(tlo-cpp PRIVATE ${private_compile_definitions})
 target_include_directories(tlo-cpp PUBLIC include)
@@ -182,7 +182,7 @@ add_library(tlo-cpp-test-main STATIC
   src/test-main.cpp
 )
 set_target_properties(tlo-cpp-test-main PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_features(tlo-cpp-test-main PUBLIC cxx_std_17)
+target_compile_features(tlo-cpp-test-main PRIVATE cxx_std_17)
 target_compile_options(tlo-cpp-test-main PRIVATE ${private_compile_options})
 target_compile_definitions(tlo-cpp-test-main
   PRIVATE ${private_compile_definitions}
@@ -210,6 +210,7 @@ if (TLO_CPP_ENABLE_TESTS)
 
   add_executable(tlo-cpp-test ${tlo_cpp_test_sources})
   set_target_properties(tlo-cpp-test PROPERTIES CXX_EXTENSIONS OFF)
+  target_compile_features(tlo-cpp-test PRIVATE cxx_std_17)
   target_compile_options(tlo-cpp-test PRIVATE ${private_compile_options})
   target_compile_definitions(tlo-cpp-test
     PRIVATE ${private_compile_definitions}
