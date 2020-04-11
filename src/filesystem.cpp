@@ -54,6 +54,8 @@ std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings,
                                "\" does not exist.");
     }
 
+    path.make_preferred();
+
     fs::path canonicalPath = fs::canonical(path);
 
     if (pathsAdded.find(canonicalPath) == pathsAdded.end()) {
