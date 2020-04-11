@@ -70,23 +70,39 @@ std::vector<fs::path> stringsToPaths(const std::vector<std::string> &strings,
   return paths;
 }
 
-std::vector<fs::path> buildFileList(const std::vector<fs::path> &paths) {
+namespace {
+void addPathToFileList(std::vector<fs::path> &fileList,
+                       std::unordered_set<fs::path, HashPath> &pathsAdded,
+                       const fs::path &filePath, bool pathsAreCanonical) {
+  if (pathsAreCanonical) {
+    if (pathsAdded.find(filePath) == pathsAdded.end()) {
+      fileList.push_back(filePath);
+      pathsAdded.insert(filePath);
+    }
+  } else {
+    fs::path canonicalPath = fs::canonical(filePath);
+
+    if (pathsAdded.find(canonicalPath) == pathsAdded.end()) {
+      fileList.push_back(filePath);
+      pathsAdded.insert(std::move(canonicalPath));
+    }
+  }
+}
+}  // namespace
+
+std::vector<fs::path> buildFileList(const std::vector<fs::path> &paths,
+                                    bool pathsAreCanonical) {
   std::vector<fs::path> fileList;
   std::unordered_set<fs::path, HashPath> pathsAdded;
 
   for (const auto &path : paths) {
     if (fs::is_regular_file(path)) {
-      if (pathsAdded.find(path) == pathsAdded.end()) {
-        fileList.push_back(path);
-        pathsAdded.insert(path);
-      }
+      addPathToFileList(fileList, pathsAdded, path, pathsAreCanonical);
     } else if (fs::is_directory(path)) {
       for (const auto &entry : fs::recursive_directory_iterator(path)) {
         if (fs::is_regular_file(entry.path())) {
-          if (pathsAdded.find(entry.path()) == pathsAdded.end()) {
-            fileList.push_back(entry.path());
-            pathsAdded.insert(entry.path());
-          }
+          addPathToFileList(fileList, pathsAdded, entry.path(),
+                            pathsAreCanonical);
         }
       }
     } else {

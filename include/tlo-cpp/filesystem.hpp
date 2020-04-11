@@ -62,9 +62,11 @@ std::pair<bool, Iterator> allFilesOrDirectories(const PathContainer &paths) {
 // std::runtime_error if a path is not a file or directory. If a path is a file,
 // adds it the file list. If a path is a directory, adds to the file list all
 // files in the directory and all its subdirectories. Returns the resulting file
-// list. Also, will not add duplicate paths and will preserve order of paths.
+// list. Also, will not add duplicate paths and will preserve order of paths. If
+// pathsAreCanonical is true, will assume paths contains only canonical paths.
 std::vector<std::filesystem::path> buildFileList(
-    const std::vector<std::filesystem::path> &paths);
+    const std::vector<std::filesystem::path> &paths,
+    bool pathsAreCanonical = false);
 }  // namespace tlo
 
 #endif  // TLO_CPP_FILESYSTEM_HPP
