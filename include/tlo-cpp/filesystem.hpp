@@ -24,10 +24,12 @@ struct HashPath {
 enum class PathType { INPUT, CANONICAL };
 
 // Will not include duplicate paths and will preserve order of paths. Throws
-// std::runtime_error if a string refers to a path that doesn't exist. If
-// pathType is PathType::INPUT, will not further modify paths after they have
-// been constructed. If pathType is PathType::CANONICAL, will convert each
-// constructed path to a canonical path using std::filesystem::canonical().
+// std::runtime_error if a string refers to a path that doesn't exist. Gets the
+// canonical path of each constructed path using std::filesystem::canonical() to
+// help with removing duplicate paths. If pathType is PathType::INPUT, will add
+// the constructed paths themselves to the container of paths. If pathType is
+// PathType::CANONICAL, will add the canonical paths returned by
+// std::filesystem::canonical() instead.
 std::vector<std::filesystem::path> stringsToPaths(
     const std::vector<std::string> &strings,
     PathType pathType = PathType::INPUT);
@@ -74,6 +76,8 @@ std::pair<bool, Iterator> allFilesOrDirectories(const PathContainer &paths) {
 // files in the directory and all its subdirectories. Returns the resulting file
 // list. Also, will not add duplicate paths and will preserve order of paths. If
 // pathsAreCanonical is true, will assume paths contains only canonical paths.
+// If pathsAreCanonical is false, gets the canonical path of each path using
+// std::filesystem::canonical() to help with removing duplicate paths.
 std::vector<std::filesystem::path> buildFileList(
     const std::vector<std::filesystem::path> &paths,
     bool pathsAreCanonical = false);
