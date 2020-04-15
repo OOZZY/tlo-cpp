@@ -6,6 +6,7 @@
 #include <ctime>
 #include <filesystem>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -29,6 +30,15 @@ enum class PathType { INPUT, CANONICAL };
 // constructed path to a canonical path using std::filesystem::canonical().
 std::vector<std::filesystem::path> stringsToPaths(
     const std::vector<std::string> &strings,
+    PathType pathType = PathType::INPUT);
+
+// Like above but will retrieve canonical paths from canonicalPaths. If
+// canonicalPaths does not contain the canonical path for a path, will use
+// std::filesystem::canonical() and insert the canonical path to canonicalPaths.
+std::vector<std::filesystem::path> stringsToPaths(
+    const std::vector<std::string> &strings,
+    std::unordered_map<std::filesystem::path, std::filesystem::path, HashPath>
+        &canonicalPaths,
     PathType pathType = PathType::INPUT);
 
 // If all paths in container are files, returns (true, end iterator). Otherwise,
@@ -66,6 +76,15 @@ std::pair<bool, Iterator> allFilesOrDirectories(const PathContainer &paths) {
 // pathsAreCanonical is true, will assume paths contains only canonical paths.
 std::vector<std::filesystem::path> buildFileList(
     const std::vector<std::filesystem::path> &paths,
+    bool pathsAreCanonical = false);
+
+// Like above but will retrieve canonical paths from canonicalPaths. If
+// canonicalPaths does not contain the canonical path for a path, will use
+// std::filesystem::canonical() and insert the canonical path to canonicalPaths.
+std::vector<std::filesystem::path> buildFileList(
+    const std::vector<std::filesystem::path> &paths,
+    std::unordered_map<std::filesystem::path, std::filesystem::path, HashPath>
+        &canonicalPaths,
     bool pathsAreCanonical = false);
 }  // namespace tlo
 
