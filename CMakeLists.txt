@@ -135,6 +135,7 @@ endmacro(prepend)
 set(tlo_cpp_headers
   chrono.hpp
   command-line.hpp
+  container.hpp
   damerau-levenshtein.hpp
   filesystem.hpp
   hash.hpp
@@ -197,6 +198,7 @@ if (TLO_CPP_ENABLE_TESTS)
   set(tlo_cpp_test_sources
     chrono-test.cpp
     command-line-test.cpp
+    container-test.cpp
     damerau-levenshtein-test.cpp
     hash-test.cpp
     lcs-test.cpp
